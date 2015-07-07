@@ -1,0 +1,175 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../paper-input/paper-input.html">
+<link rel="import" href="../paper-menu/paper-menu.html">
+<link rel="import" href="../paper-item/paper-item.html">
+
+<!--
+An element providing a solution to no problem in particular.
+
+Example:
+
+    <paper-typeahead-input></paper-typeahead-input>
+
+@demo
+-->
+<dom-module id="paper-typeahead-input">
+
+  <style>
+    :host {
+      display: block;
+      box-sizing: border-box;
+    }
+  </style>
+
+  <template>
+    <template is="dom-if" if="{{label}}">
+     <h3>{{label}}</h3> 
+   </template>
+    <paper-input value="{{inputValue}}" on-keyup="_keydown" id="typeahead-input" label="{{placeholder}}"></paper-input>
+    <paper-menu id="suggetions">
+      <template is="dom-repeat" items="{{_suggestions}}">
+        <paper-item>
+        <span>{{item}}</span>
+        </paper-item>
+      </template>
+    </paper-menu>
+  </template>
+
+</dom-module>
+
+<script>
+  
+  Polymer({
+
+    is: 'paper-typeahead-input',
+
+    properties: {
+
+      /**
+       * The label that will show up as the label for tags input.
+       */
+      label:{
+        type:String,
+        value:''
+      },
+      /**
+       * The placeholder for the paper-input element.
+       */
+      placeholder:{
+        type:String,
+        value:'Please enter a new tag'
+      },
+      /**
+       * The candidates from local variable.
+       */
+      localCandidates:{
+        type:Array,
+        value:[]
+      },
+      /**
+       * Internal variable holding all matched suggestions.
+       */
+      _suggestions:{
+        type:Array,
+        value:[]
+      },
+      /**
+       * Maximum number of suggestions to show up in typeahead.
+       */
+      maxSuggestions:{
+        type:Number,
+        value:5
+      },
+      /**
+       * Input value.
+       */
+      inputValue: String,
+
+    },
+
+    // Element Lifecycle
+
+    ready: function() {
+      // `ready` is called after all elements have been configured, but
+      // propagates bottom-up. This element's children are ready, but parents
+      // are not.
+      //
+      // This is the point where you should make modifications to the DOM (when
+      // necessary), or kick off any processes the element wants to perform.
+      console.log("ready");
+    },
+
+    attached: function() {
+      console.log("attached");
+      console.log(this.properties.localCandidates.value);
+      // `attached` fires once the element and its parents have been inserted
+      // into a document.
+      //
+      // This is a good place to perform any work related to your element's
+      // visual state or active behavior (measuring sizes, beginning animations,
+      // loading resources, etc).
+    },
+
+    detached: function() {
+      // The analog to `attached`, `detached` fires when the element has been
+      // removed from a document.
+      //
+      // Use this to clean up anything you did in `attached`.
+    },
+
+    // Element Behavior
+
+    /**
+     * The `paper-typeahead-input-lasers` event is fired whenever `fireLasers` is called.
+     *
+     * @event paper-typeahead-input-lasers
+     * @detail {{sound: String}}
+     */
+
+    /**
+     * Callback for keydown event
+     *
+     * @param {e} event
+     */
+    _keydown: function(e) {
+      console.log("_keydown");
+      console.log(e.which);
+      if (e.which == 40){
+        //down button
+        var suggestionsMenu = document.querySelector('paper-menu') ;
+        suggestionsMenu.select(1);
+        console.log(suggestionsMenu);
+      }
+      // if (this.inputValue.length >= 3){
+        this._suggestions = this._search(this.inputValue);
+        console.log(this._suggestions);
+      // }
+    },
+    _search:function(term){
+      console.log("_search"); 
+      console.log(term);
+      var patt =  new RegExp(term.toLowerCase());
+      var matched = [];
+      for (var i = 0; i < this.localCandidates.length; i ++){
+        if (matched.length == this.maxSuggestions){
+          break;
+        }
+        if (patt.test(this.localCandidates[i].toLowerCase()) == true){
+          matched.push(this.localCandidates[i]);
+        }
+      }
+      return matched;
+    }
+
+  });
+
+</script>
