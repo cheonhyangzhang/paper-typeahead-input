@@ -34,20 +34,22 @@ Example:
     <template is="dom-if" if="{{label}}">
      <h3>{{label}}</h3> 
    </template>
-    <paper-input value="{{inputValue}}" on-keyup="_keydown" id="typeahead-input" label="{{placeholder}}"></paper-input>
-    <paper-menu id="suggetions">
+    <paper-input value="{{inputValue}}" on-keyup="_keyup" on-keydown="_keydown" label="{{placeholder}}"></paper-input>
+    <template is="dom-if" if="{{_suggestions.length}}">
+    <paper-menu >
       <template is="dom-repeat" items="{{_suggestions}}">
-        <paper-item>
+        <paper-item on-tap="_select">
         <span>{{item}}</span>
         </paper-item>
       </template>
     </paper-menu>
+   </template>
   </template>
 
 </dom-module>
 
 <script>
-  
+
   Polymer({
 
     is: 'paper-typeahead-input',
@@ -92,7 +94,7 @@ Example:
       /**
        * Input value.
        */
-      inputValue: String,
+      inputValue: String
 
     },
 
@@ -106,6 +108,7 @@ Example:
       // This is the point where you should make modifications to the DOM (when
       // necessary), or kick off any processes the element wants to perform.
       console.log("ready");
+
     },
 
     attached: function() {
@@ -129,34 +132,94 @@ Example:
     // Element Behavior
 
     /**
-     * The `paper-typeahead-input-lasers` event is fired whenever `fireLasers` is called.
-     *
-     * @event paper-typeahead-input-lasers
-     * @detail {{sound: String}}
-     */
-
-    /**
      * Callback for keydown event
      *
      * @param {e} event
      */
     _keydown: function(e) {
-      console.log("_keydown");
+      if (e.which == 40 || e.which == 38){
+          e.preventDefault();
+      }
+    },
+    /**
+     * Callback on click event on paper-item
+     *
+     */
+    _select: function(e) {
+      console.log("_select");
+      var suggestionsMenu = this.querySelector('paper-menu');
+      if (suggestionsMenu && typeof(suggestionsMenu) != 'undefined'){
+        console.log("suggestionsMenu defined");
+        var selectedItem = e.currentTarget;
+        console.log(selectedItem);
+        index = Number(suggestionsMenu.indexOf(selectedItem));
+        console.log(index);
+        this.inputValue = this._suggestions[index];
+        this._suggestions = [];
+      }
+      else{
+        console.log("suggestionsMenu not defined");
+      }
+    },
+    /**
+     * Callback for keyup event
+     *
+     * @param {e} event
+     */
+    _keyup: function(e) {
+      console.log("_keyup");
       console.log(e.which);
       if (e.which == 40){
         //down button
-        var suggestionsMenu = document.querySelector('paper-menu') ;
-        suggestionsMenu.select(1);
-        console.log(suggestionsMenu);
+        var suggestionsMenu = this.querySelector('paper-menu');
+        var selectedItem = suggestionsMenu.focusedItem;
+        var index = 0;
+        if (typeof(selectedItem) != 'undefined'){
+          index = Number(suggestionsMenu.indexOf(selectedItem));
+          index = Math.min(index + 1, this._suggestions.length - 1);
+        }
+        suggestionsMenu.select(index);
+        var input = this.querySelector('paper-input');
+        input.$.input.focus();
       }
-      // if (this.inputValue.length >= 3){
-        this._suggestions = this._search(this.inputValue);
+      else if (e.which == 38){
+        //up
+        var suggestionsMenu = this.querySelector('paper-menu');
+        var selectedItem = suggestionsMenu.focusedItem;
+        if (typeof(selectedItem) != 'undefined'){
+          index = Number(suggestionsMenu.indexOf(selectedItem));
+          index = Math.max(index - 1, -1);
+          suggestionsMenu.select(index);
+        }
+        var input = this.querySelector('paper-input');
+        input.$.input.focus();
+      }
+      else if (e.which == 13){
+        var suggestionsMenu = this.querySelector('paper-menu');
+        if (suggestionsMenu && typeof(suggestionsMenu) != 'undefined'){
+          var selectedItem = suggestionsMenu.focusedItem;
+          if (typeof(selectedItem) != 'undefined'){
+            index = Number(suggestionsMenu.indexOf(selectedItem));
+            this.inputValue = this._suggestions[index];
+            this._suggestions = [];
+          }
+        }
+      }
+      else{
+        var suggestionsMenu = this.querySelector('paper-menu');
+        if (suggestionsMenu && typeof(suggestionsMenu) != 'undefined'){
+          suggestionsMenu.select(-1);
+        }
+        // if (this.inputValue.length >= 3){
+        this._suggestions = this._search(this.inputValue.trim());
         console.log(this._suggestions);
-      // }
+        // }
+      }
     },
     _search:function(term){
-      console.log("_search"); 
-      console.log(term);
+      if (term == ""){
+        return [];
+      }
       var patt =  new RegExp(term.toLowerCase());
       var matched = [];
       for (var i = 0; i < this.localCandidates.length; i ++){

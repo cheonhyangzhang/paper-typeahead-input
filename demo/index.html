@@ -20,10 +20,24 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <template is="dom-bind" id="app">
     <paper-typeahead-input local-candidates="{{states}}"  placeholder="Please enter value">
     </paper-typeahead-input>
+    <paper-typeahead-input local-candidates="{{states2}}"  placeholder="Please enter value">
+    </paper-typeahead-input>
 
     <script>
         window.addEventListener('WebComponentsReady', function() {
         var app = document.querySelector('#app');
+         app.states2 = [
+           "Alabama",
+           "Alaska",
+           "American Samoa",
+           "Arizona",
+           "Arkansas",
+           "California",
+           "Colorado",
+           "Connecticut",
+           "Delaware",
+           "District Of Columbia",
+        ];
         app.states = [
            "Alabama",
            "Alaska",
