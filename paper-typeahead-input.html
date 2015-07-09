@@ -11,6 +11,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../paper-input/paper-input.html">
 <link rel="import" href="../paper-menu/paper-menu.html">
 <link rel="import" href="../paper-item/paper-item.html">
+<link rel="import" href="../paper-material/paper-material.html">
 
 <!--
 An element providing a solution to no problem in particular.
@@ -28,14 +29,23 @@ Example:
       display: block;
       box-sizing: border-box;
     }
+    paper-material{
+      left:0;
+      right:0;
+      position: absolute;
+      z-index: 10; 
+    }
+
   </style>
 
   <template>
     <template is="dom-if" if="{{label}}">
      <h3>{{label}}</h3> 
-   </template>
+    </template>
+   <div style="position:relative;">
     <paper-input value="{{inputValue}}" on-keyup="_keyup" on-keydown="_keydown" label="{{placeholder}}"></paper-input>
     <template is="dom-if" if="{{_suggestions.length}}">
+    <paper-material >
     <paper-menu >
       <template is="dom-repeat" items="{{_suggestions}}">
         <paper-item on-tap="_select">
@@ -43,7 +53,10 @@ Example:
         </paper-item>
       </template>
     </paper-menu>
+    </paper-material>
+
    </template>
+  </div>
   </template>
 
 </dom-module>
@@ -108,7 +121,13 @@ Example:
       // This is the point where you should make modifications to the DOM (when
       // necessary), or kick off any processes the element wants to perform.
       console.log("ready");
-
+      // document.addEventListener("click", function(){
+      //   console.log("click");
+      //   console.log(this._suggestions);
+      //   var typeahead = document.querySelector('paper-typeahead-input')
+      //   this._suggestions = [];
+      //   console.log(this._suggestions);
+      // });
     },
 
     attached: function() {
