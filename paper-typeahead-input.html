@@ -14,11 +14,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../paper-material/paper-material.html">
 
 <!--
-An element providing typeahead feature for input.
+paper-typeahead-input is an element providing typeahead feature for input.
 
-Example:
+Basic use of paper-typeahead-input. Use a predefined list of suggestions.
 
-    <paper-typeahead-input></paper-typeahead-input>
+    <paper-typeahead-input label="US states" local-candidates="{{states}}"
+     placeholder="Please enter value" max-suggestions="4">
+    </paper-typeahead-input>
 
 @demo
 -->
@@ -120,9 +122,7 @@ Example:
       //
       // This is the point where you should make modifications to the DOM (when
       // necessary), or kick off any processes the element wants to perform.
-      console.log("ready");
       document.addEventListener("click", function(){
-        console.log("click on body");
         var ptinputs = document.querySelectorAll('paper-typeahead-input')
         for (var i = 0; i < ptinputs.length; i ++){
           var ptinput = ptinputs[i];
@@ -132,7 +132,6 @@ Example:
     },
 
     attached: function() {
-      console.log("attached");
       // `attached` fires once the element and its parents have been inserted
       // into a document.
       //
@@ -165,14 +164,10 @@ Example:
      *
      */
     _select: function(e) {
-      console.log("_select");
       var suggestionsMenu = this.querySelector('paper-menu');
       if (suggestionsMenu && typeof(suggestionsMenu) != 'undefined'){
-        console.log("suggestionsMenu defined");
         var selectedItem = e.currentTarget;
-        console.log(selectedItem);
         index = Number(suggestionsMenu.indexOf(selectedItem));
-        console.log(index);
         this.inputValue = this._suggestions[index];
         this._suggestions = [];
         e.stopPropagation();
@@ -187,8 +182,6 @@ Example:
      * @param {e} event
      */
     _keyup: function(e) {
-      console.log("_keyup");
-      console.log(e.which);
       if (e.which == 40){
         //down button
         var suggestionsMenu = this.querySelector('paper-menu');
@@ -232,7 +225,6 @@ Example:
         }
         // if (this.inputValue.length >= 3){
         this._suggestions = this._search(this.inputValue.trim());
-        console.log(this._suggestions);
         // }
       }
     },
