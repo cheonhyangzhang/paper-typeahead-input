@@ -22,6 +22,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <paper-typeahead-input max-suggestions="3" label="US states" local-candidates="{{states}}"  placeholder="Please enter value">
     </paper-typeahead-input>
 
+    <paper-typeahead-input max-suggestions="3" label="US states" prefetch-url="http://localhost:9004/components/paper-typeahead-input/countries.json" placeholder="Please enter value">
+    </paper-typeahead-input>
+
 
     <script>
         window.addEventListener('WebComponentsReady', function() {

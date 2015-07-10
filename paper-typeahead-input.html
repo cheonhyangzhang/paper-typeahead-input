@@ -11,6 +11,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../paper-input/paper-input.html">
 <link rel="import" href="../paper-menu/paper-menu.html">
 <link rel="import" href="../paper-item/paper-item.html">
+<link rel="import" href="../iron-ajax/iron-ajax.html">
 <link rel="import" href="../paper-material/paper-material.html">
 
 <!--
@@ -44,6 +45,16 @@ Basic use of paper-typeahead-input. Use a predefined list of suggestions.
     <template is="dom-if" if="{{label}}">
      <h3>{{label}}</h3> 
     </template>
+    <template is="dom-if" if="{{prefetchUrl}}">
+    <iron-ajax
+    auto
+    url="{{prefetchUrl}}"
+    handle-as="json"
+    on-response="handleResponse"
+    last-response="{{_prefetchedCandidates}}"
+    ></iron-ajax>
+    </template>
+
    <div style="position:relative;">
     <paper-input value="{{inputValue}}" on-keyup="_keyup" on-keydown="_keydown" label="{{placeholder}}"></paper-input>
     <template is="dom-if" if="{{_suggestions.length}}">
@@ -89,6 +100,17 @@ Basic use of paper-typeahead-input. Use a predefined list of suggestions.
        * The candidates from local variable.
        */
       localCandidates:{
+        type:Array,
+        value:[]
+      },
+      /**
+       * Url for a prefectched list in json format for the list of suggestion candidates. 
+       */
+      prefetchUrl:String,
+      /**
+      * The prefetched candidates get by prefetchUrl
+      */
+      _prefetchedCandidates:{
         type:Array,
         value:[]
       },
@@ -148,7 +170,10 @@ Basic use of paper-typeahead-input. Use a predefined list of suggestions.
     },
 
     // Element Behavior
-
+    handleResponse:function(e){
+      console.log("handleResponse");
+      console.log(this._prefetchedCandidates);
+    },
     /**
      * Callback for keydown event
      *
@@ -234,12 +259,29 @@ Basic use of paper-typeahead-input. Use a predefined list of suggestions.
       }
       var patt =  new RegExp(term.toLowerCase());
       var matched = [];
-      for (var i = 0; i < this.localCandidates.length; i ++){
-        if (matched.length == this.maxSuggestions){
-          break;
+      console.log("localCandidates");
+      console.log(this.localCandidates);
+      if (typeof(this.localCandidates) != 'undefined'){
+        for (var i = 0; i < this.localCandidates.length; i ++){
+          if (matched.length == this.maxSuggestions){
+            break;
+          }
+          if (patt.test(this.localCandidates[i].toLowerCase()) == true){
+            matched.push(this.localCandidates[i]);
+          }
         }
-        if (patt.test(this.localCandidates[i].toLowerCase()) == true){
-          matched.push(this.localCandidates[i]);
+      }
+      console.log("_prefetchedCandidates");
+      console.log(this._prefetchedCandidates);
+      console.log(typeof(this._prefetchedCandidates));
+      if (typeof(this._prefetchedCandidates) != 'undefined'){
+        for (var i = 0; i < this._prefetchedCandidates.length; i ++){
+          if (matched.length == this.maxSuggestions){
+            break;
+          }
+          if (patt.test(this._prefetchedCandidates[i].toLowerCase()) == true){
+            matched.push(this._prefetchedCandidates[i]);
+          }
         }
       }
       return matched;
