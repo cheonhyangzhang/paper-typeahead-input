@@ -38,7 +38,12 @@ Basic use of paper-typeahead-input. Use a predefined list of suggestions.
       position: absolute;
       z-index: 10; 
     }
-
+    paper-item{
+      cursor: pointer;
+    }
+    .iron-selected{
+      background: #E0E0E0;
+    }
   </style>
 
   <template>
@@ -61,7 +66,7 @@ Basic use of paper-typeahead-input. Use a predefined list of suggestions.
     <paper-material >
     <paper-menu >
       <template is="dom-repeat" items="{{_suggestions}}">
-        <paper-item on-tap="_select">
+        <paper-item  on-mouseover="_selecton" on-tap="_select">
         <span>{{item}}</span>
         </paper-item>
       </template>
@@ -172,7 +177,6 @@ Basic use of paper-typeahead-input. Use a predefined list of suggestions.
     // Element Behavior
     handleResponse:function(e){
       console.log("handleResponse");
-      console.log(this._prefetchedCandidates);
     },
     /**
      * Callback for keydown event
@@ -182,6 +186,23 @@ Basic use of paper-typeahead-input. Use a predefined list of suggestions.
     _keydown: function(e) {
       if (e.which == 40 || e.which == 38){
           e.preventDefault();
+      }
+    },
+    /**
+     * Callback on click event on paper-item
+     *
+     */
+    _selecton:function(e){
+      var suggestionsMenu = this.querySelector('paper-menu');
+      if (suggestionsMenu && typeof(suggestionsMenu) != 'undefined'){
+        var selectedItem = e.currentTarget;
+        index = Number(suggestionsMenu.indexOf(selectedItem));
+        suggestionsMenu.select(index);
+        var input = this.querySelector('paper-input');
+        input.$.input.focus();
+      }
+      else{
+        console.log("suggestionsMenu not defined");
       }
     },
     /**
@@ -209,6 +230,7 @@ Basic use of paper-typeahead-input. Use a predefined list of suggestions.
     _keyup: function(e) {
       if (e.which == 40){
         //down button
+        console.log("down");
         var suggestionsMenu = this.querySelector('paper-menu');
         var selectedItem = suggestionsMenu.focusedItem;
         var index = 0;
@@ -216,6 +238,8 @@ Basic use of paper-typeahead-input. Use a predefined list of suggestions.
           index = Number(suggestionsMenu.indexOf(selectedItem));
           index = Math.min(index + 1, this._suggestions.length - 1);
         }
+        console.log("index");
+        console.log(index);
         suggestionsMenu.select(index);
         var input = this.querySelector('paper-input');
         input.$.input.focus();
@@ -259,8 +283,6 @@ Basic use of paper-typeahead-input. Use a predefined list of suggestions.
       }
       var patt =  new RegExp(term.toLowerCase());
       var matched = [];
-      console.log("localCandidates");
-      console.log(this.localCandidates);
       if (typeof(this.localCandidates) != 'undefined'){
         for (var i = 0; i < this.localCandidates.length; i ++){
           if (matched.length == this.maxSuggestions){
@@ -271,9 +293,6 @@ Basic use of paper-typeahead-input. Use a predefined list of suggestions.
           }
         }
       }
-      console.log("_prefetchedCandidates");
-      console.log(this._prefetchedCandidates);
-      console.log(typeof(this._prefetchedCandidates));
       if (typeof(this._prefetchedCandidates) != 'undefined'){
         for (var i = 0; i < this._prefetchedCandidates.length; i ++){
           if (matched.length == this.maxSuggestions){

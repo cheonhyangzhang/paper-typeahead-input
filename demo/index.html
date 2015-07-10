@@ -19,10 +19,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <body>
     <template is="dom-bind" id="app">
     Basic use of paper-typeahead-input. Use a predefined list of suggestions.
-    <paper-typeahead-input max-suggestions="3" label="US states" local-candidates="{{states}}"  placeholder="Please enter value">
+    <paper-typeahead-input max-suggestions="3" label="Local candidates example with maxSuggestions 3" local-candidates="{{states}}"  placeholder="US states">
     </paper-typeahead-input>
 
-    <paper-typeahead-input max-suggestions="3" label="US states" prefetch-url="http://localhost:9004/components/paper-typeahead-input/countries.json" placeholder="Please enter value">
+    <paper-typeahead-input max-suggestions="4" label="Prefetched candidates example with maxSuggestions 4" prefetch-url="http://localhost:9004/components/paper-typeahead-input/countries.json" placeholder="Countries">
+    </paper-typeahead-input>
+
+    <paper-typeahead-input max-suggestions="4" label="Both local candidates and prefetched example with masSuggestions" local-candidates="{{states}}" prefetch-url="http://localhost:9004/components/paper-typeahead-input/countries.json" placeholder="US states and Countries">
     </paper-typeahead-input>
 
 
