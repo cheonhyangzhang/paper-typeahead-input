@@ -134,6 +134,10 @@ Basic use of paper-typeahead-input. Use a predefined list of suggestions.
         value:5
       },
       /**
+       * Remote url to perform a search using the value in the input. The input value will be passed in as url parameter. The placeholder should be %QUERY.
+       */
+      remoteUrl:String,
+      /**
        * Input value.
        */
       inputValue: String
@@ -273,7 +277,8 @@ Basic use of paper-typeahead-input. Use a predefined list of suggestions.
           suggestionsMenu.select(-1);
         }
         // if (this.inputValue.length >= 3){
-        this._suggestions = this._search(this.inputValue.trim());
+        this._search(this.inputValue.trim());
+        // this._suggestions = this._search(this.inputValue.trim());
         // }
       }
     },
@@ -281,6 +286,7 @@ Basic use of paper-typeahead-input. Use a predefined list of suggestions.
       if (term == ""){
         return [];
       }
+      this._suggestions = [];
       var patt =  new RegExp(term.toLowerCase());
       var matched = [];
       if (typeof(this.localCandidates) != 'undefined'){
@@ -293,6 +299,7 @@ Basic use of paper-typeahead-input. Use a predefined list of suggestions.
           }
         }
       }
+      
       if (typeof(this._prefetchedCandidates) != 'undefined'){
         for (var i = 0; i < this._prefetchedCandidates.length; i ++){
           if (matched.length == this.maxSuggestions){
@@ -303,7 +310,23 @@ Basic use of paper-typeahead-input. Use a predefined list of suggestions.
           }
         }
       }
-      return matched;
+      this._suggestions = this._suggestions.concat(matched);
+      if (typeof(this.remoteUrl) != 'undefined'){
+        var url = this.remoteUrl.replace("%QUERY", term);
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.open('GET', url, true);
+        xmlhttp.setRequestHeader("Content-type", "application/json");
+        var ptinput = this;
+        xmlhttp.onreadystatechange = function() {
+            if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
+              var resp = xmlhttp.response;
+              var remoteMatched = JSON.parse(resp);
+              var cuttedMatched = remoteMatched.slice(0,ptinput.maxSuggestions);
+              ptinput._suggestions = ptinput._suggestions.concat(cuttedMatched);
+            }
+        }
+        xmlhttp.send();
+      }
     }
 
   });
