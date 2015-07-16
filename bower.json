@@ -2,9 +2,9 @@
   "name": "paper-typeahead-input",
   "version": "1.0.0",
   "authors": [
-    "Anonymous <anonymous@example.com>"
+    "Tianxiang Zhang <cenhiangapply@gmail.com>"
   ],
-  "description": "An element providing a solution to no problem in particular.",
+  "description": "paper-typeahead-input is an element providing typeahead feature for input.",
   "keywords": [
     "web-component",
     "web-components",

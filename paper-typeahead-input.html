@@ -23,6 +23,7 @@ Basic use of paper-typeahead-input. Use a predefined list of suggestions.
      placeholder="Please enter value" max-suggestions="4">
     </paper-typeahead-input>
 
+For now, there are three types of sources for suggetions. localCandidates, prefetchUrl, and remoteUrl. The candidates combined from these three ways becomes the potential candidates for input.
 @demo
 -->
 <dom-module id="paper-typeahead-input">
@@ -55,7 +56,6 @@ Basic use of paper-typeahead-input. Use a predefined list of suggestions.
     auto
     url="{{prefetchUrl}}"
     handle-as="json"
-    on-response="handleResponse"
     last-response="{{_prefetchedCandidates}}"
     ></iron-ajax>
     </template>
@@ -88,7 +88,7 @@ Basic use of paper-typeahead-input. Use a predefined list of suggestions.
     properties: {
 
       /**
-       * The label that will show up as the label for tags input.
+       * The label that will show up as the label for tags input. It not specified, no label will show up.
        */
       label:{
         type:String,
@@ -99,7 +99,7 @@ Basic use of paper-typeahead-input. Use a predefined list of suggestions.
        */
       placeholder:{
         type:String,
-        value:'Please enter a new tag'
+        value:'Please enter values here'
       },
       /**
        * The candidates from local variable.
@@ -109,7 +109,7 @@ Basic use of paper-typeahead-input. Use a predefined list of suggestions.
         value:[]
       },
       /**
-       * Url for a prefectched list in json format for the list of suggestion candidates. 
+       * Url for a prefectched list in json format for the list of suggestion candidates. The response should be something like: ["a","b"] 
        */
       prefetchUrl:String,
       /**
@@ -179,9 +179,6 @@ Basic use of paper-typeahead-input. Use a predefined list of suggestions.
     },
 
     // Element Behavior
-    handleResponse:function(e){
-      console.log("handleResponse");
-    },
     /**
      * Callback for keydown event
      *
@@ -284,9 +281,9 @@ Basic use of paper-typeahead-input. Use a predefined list of suggestions.
     },
     _search:function(term){
       if (term == ""){
-        return [];
+        this._suggestions = [];
+        return;
       }
-      this._suggestions = [];
       var patt =  new RegExp(term.toLowerCase());
       var matched = [];
       if (typeof(this.localCandidates) != 'undefined'){
@@ -310,7 +307,7 @@ Basic use of paper-typeahead-input. Use a predefined list of suggestions.
           }
         }
       }
-      this._suggestions = this._suggestions.concat(matched);
+      // this._suggestions = this._suggestions.concat(matched);
       if (typeof(this.remoteUrl) != 'undefined'){
         var url = this.remoteUrl.replace("%QUERY", term);
         var xmlhttp = new XMLHttpRequest();
@@ -322,10 +319,16 @@ Basic use of paper-typeahead-input. Use a predefined list of suggestions.
               var resp = xmlhttp.response;
               var remoteMatched = JSON.parse(resp);
               var cuttedMatched = remoteMatched.slice(0,ptinput.maxSuggestions);
-              ptinput._suggestions = ptinput._suggestions.concat(cuttedMatched);
+              console.log(cuttedMatched);
+              matched = matched.concat(cuttedMatched);
+              // ptinput._suggestions = ptinput._suggestions.concat(cuttedMatched);
+              ptinput._suggestions = matched;
             }
         }
         xmlhttp.send();
+      }
+      else{
+        this._suggestions = matched;
       }
     }
 
