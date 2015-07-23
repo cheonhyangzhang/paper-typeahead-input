@@ -160,6 +160,8 @@ For now, there are three types of sources for suggetions. localCandidates, prefe
           ptinput._suggestions = [];
         }
       });
+      var input = this.querySelector('paper-input');
+      input.$.input.autocomplete = 'address-level4';
     },
 
     attached: function() {
