@@ -73,7 +73,21 @@ If you want to save it in bower.json file, remember to add flag --save
     </template>
 
    <div style="position:relative;">
-    <paper-input value="{{inputValue}}" on-keyup="_keyup" on-keydown="_keydown" label="{{placeholder}}"></paper-input>
+    <paper-input value="{{inputValue}}" on-keyup="_keyup" on-keydown="_keydown"  label="{{placeholder}}"
+      always-float-label="{{alwaysFloatLabel}}"
+      autofocus="{{autofocus}}"
+      char-counter="{{charCounter}}"
+      disabled="{{disabled}}"
+      error-message="{{errorMessage}}"
+      maxlength="{{maxlength}}"
+      minlength="{{minlength}}"
+      no-label-float="{{noLabelFloat}}"
+      readonly="{{readonly}}"
+      required="{{required}}"
+      auto-validate="{{autoValidate}}"
+      pattern="{{pattern}}"
+    ></paper-input>
+
     <template is="dom-if" if="{{_suggestions.length}}">
     <paper-material >
     <paper-menu >
@@ -152,8 +166,55 @@ If you want to save it in bower.json file, remember to add flag --save
       /**
        * Input value.
        */
-      inputValue: String
-
+      inputValue: String,
+      /**
+       * Bind this to the <paper-input>'s alwaysFloatLabel property.
+       */
+      alwaysFloatLabel:Boolean,
+      /**
+       * Bind this to the <paper-input>'s autofocus property.
+       */
+      autofocus:Boolean,
+      /**
+       * Bind this to the <paper-input>'s charCounter property.
+       */
+      charCounter:Boolean,
+      /**
+       * Bind this to the <paper-input>'s disabled property.
+       */
+      disabled:Boolean,
+      /**
+       * Bind this to the <paper-input>'s errorMessage property.
+       */
+      errorMessage:String,
+      /**
+       * Bind this to the <paper-input>'s maxlength property.
+       */
+      maxlength:Number,
+      /**
+       * Bind this to the <paper-input>'s minlength property.
+       */
+      minlength:Number, 
+      /**
+       * Bind this to the <paper-input>'s noLabelFloat property.
+       */
+      noLabelFloat:Boolean,
+      /**
+       * Bind this to the <paper-input>'s readonly property.
+       */
+      readonly:Boolean,
+      /**
+       * Bind this to the <paper-input>'s required property.
+       */
+      required:Boolean,
+      /**
+       * Bind this to the <paper-input>'s autoValidate property.
+       */
+      autoValidate:Boolean,
+      /**
+       * Bind this to the <paper-input>'s pattern property.
+       */
+      pattern:String
     },
 
     // Element Lifecycle
