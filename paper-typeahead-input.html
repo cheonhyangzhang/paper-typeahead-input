@@ -90,7 +90,7 @@ If you want to save it in bower.json file, remember to add flag --save
 
     <template is="dom-if" if="{{_suggestions.length}}">
     <paper-material >
-    <paper-menu >
+    <paper-menu on-iron-select="_itemSelect" on-iron-items-changed="_itemsChanged">
       <template is="dom-repeat" items="{{_suggestions}}">
         <paper-item  on-mouseover="_selecton" on-tap="_select">
         <span>{{item}}</span>
@@ -110,7 +110,16 @@ If you want to save it in bower.json file, remember to add flag --save
   Polymer({
 
     is: 'paper-typeahead-input',
-
+    /**
+     * Fired when an item in the suggestion list is selected, either by up and down key or hover by mouse.
+     *
+     * @event pt-item-select
+     */
+    /**
+     * Fired when an item in the suggestion list is confirmed, either by hit enter key where element selected or clicked on the element directly by mouse.
+     *
+     * @event pt-item-changed
+     */
     properties: {
 
       /**
@@ -252,7 +261,12 @@ If you want to save it in bower.json file, remember to add flag --save
       //
       // Use this to clean up anything you did in `attached`.
     },
-
+    _itemsChanged:function(e,detail){
+      this.fire('pt-item-changed',detail);
+    },
+    _itemSelect:function(e, detail){
+      this.fire('pt-item-select',detail);
+    },
     // Element Behavior
     /**
      * Callback for keydown event
@@ -306,7 +320,6 @@ If you want to save it in bower.json file, remember to add flag --save
     _keyup: function(e) {
       if (e.which == 40){
         //down button
-        console.log("down");
         var suggestionsMenu = this.querySelector('paper-menu');
         var selectedItem = suggestionsMenu.focusedItem;
         var index = 0;
@@ -314,8 +327,6 @@ If you want to save it in bower.json file, remember to add flag --save
           index = Number(suggestionsMenu.indexOf(selectedItem));
           index = Math.min(index + 1, this._suggestions.length - 1);
         }
-        console.log("index");
-        console.log(index);
         suggestionsMenu.select(index);
         var input = this.querySelector('paper-input');
         input.$.input.focus();
