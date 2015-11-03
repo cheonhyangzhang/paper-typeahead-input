@@ -90,9 +90,9 @@ If you want to save it in bower.json file, remember to add flag --save
 
     <template is="dom-if" if="{{_suggestions.length}}">
     <paper-material >
-    <paper-menu on-iron-select="_itemSelect" on-iron-items-changed="_itemsChanged">
+    <paper-menu on-iron-select="_itemSelect">
       <template is="dom-repeat" items="{{_suggestions}}">
-        <paper-item  on-mouseover="_selecton" on-tap="_select">
+        <paper-item on-mouseover="_selecton" on-tap="_select">
         <span>{{item}}</span>
         </paper-item>
       </template>
@@ -118,7 +118,7 @@ If you want to save it in bower.json file, remember to add flag --save
     /**
      * Fired when an item in the suggestion list is confirmed, either by hit enter key where element selected or clicked on the element directly by mouse.
      *
-     * @event pt-item-changed
+     * @event pt-item-confirmed
      */
     properties: {
 
@@ -261,9 +261,6 @@ If you want to save it in bower.json file, remember to add flag --save
       //
       // Use this to clean up anything you did in `attached`.
     },
-    _itemsChanged:function(e,detail){
-      this.fire('pt-item-changed',detail);
-    },
     _itemSelect:function(e, detail){
       this.fire('pt-item-select',detail);
     },
@@ -279,7 +276,7 @@ If you want to save it in bower.json file, remember to add flag --save
       }
     },
     /**
-     * Callback on click event on paper-item
+     * Callback on mouseover event on paper-item
      *
      */
     _selecton:function(e){
@@ -306,6 +303,7 @@ If you want to save it in bower.json file, remember to add flag --save
         index = Number(suggestionsMenu.indexOf(selectedItem));
         this.inputValue = this._suggestions[index];
         this._suggestions = [];
+        this.fire('pt-item-confirmed',e.target);
         e.stopPropagation();
       }
       else{
@@ -351,6 +349,7 @@ If you want to save it in bower.json file, remember to add flag --save
             index = Number(suggestionsMenu.indexOf(selectedItem));
             this.inputValue = this._suggestions[index];
             this._suggestions = [];
+            this.fire('pt-item-confirmed',selectedItem);
           }
         }
       }
