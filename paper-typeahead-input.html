@@ -120,6 +120,16 @@ If you want to save it in bower.json file, remember to add flag --save
      *
      * @event pt-item-confirmed
      */
+     /**
+     * Fired when remoteUrl is set up and http request on remoteUrl is scheduled to send ( depends on remoteUrlWaitMs setting).
+     *
+     * @event pt-remote-searching-start
+     */
+     /**
+     * Fired when remoteUrl is set up and http request on remoteUrl is finished. 
+     *
+     * @event pt-remote-searching-end
+     */
     properties: {
 
       /**
@@ -417,6 +427,7 @@ If you want to save it in bower.json file, remember to add flag --save
       // this._suggestions = this._suggestions.concat(matched);
       if (typeof(this.remoteUrl) != 'undefined'){
         var pt_element = this;
+        this.fire('pt-remote-searching-start',pt_element);
         pt_element.remoteUrlSearching = true;
         this.debounce('remoteUrlSearch', function(){
           var url = pt_element.remoteUrl.replace("%QUERY", term);
@@ -435,6 +446,7 @@ If you want to save it in bower.json file, remember to add flag --save
                     ptinput._suggestions = matched;
                 }
                 pt_element.remoteUrlSearching = false;
+                this.fire('pt-remote-searching-end',pt_element);
               }
 
 
