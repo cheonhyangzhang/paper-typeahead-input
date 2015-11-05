@@ -75,7 +75,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     &lt;/paper-typeahead-input&gt;
     </code>
     </paper-material>
-    <paper-typeahead-input max-suggestions="5" label="Remote URL example with wait time set to 1s" remote-url="http://cheonhyangzhang.github.io/paper-typeahead-input/components/paper-typeahead-input/fakeRemote.json?q=%QUERY" remote-url-wait-ms="1000" placeholder="Enter anything that will be passed in as a url parameter">
+    <paper-material class="demo"  elevation="1">
+      Is remote url Searching? <span>{{isSearching}}</span>
+    </paper-material>
+    <paper-typeahead-input max-suggestions="5" label="Remote URL example with wait time set to 1s" remote-url="http://cheonhyangzhang.github.io/paper-typeahead-input/components/paper-typeahead-input/fakeRemote.json?q=%QUERY" remote-url-searching="{{isSearching}}" remote-url-wait-ms="1000" placeholder="Enter anything that will be passed in as a url parameter">
     </paper-typeahead-input>
     </paper-material>
 
@@ -94,6 +97,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         window.addEventListener('WebComponentsReady', function() {
         var app = document.querySelector('#app');
         app.test1 = true;
+        app.isSearching = false;
         app.states = [
            "Alabama",
            "Alaska",

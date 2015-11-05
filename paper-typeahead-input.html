@@ -171,15 +171,25 @@ If you want to save it in bower.json file, remember to add flag --save
       /**
        * Remote url to perform a search using the value in the input. The input value will be passed in as url parameter. The placeholder should be %QUERY.
        */
-      remoteUrl:String,
-      /**
+      remoteUrl:String,      
+       /**
        * Number of milliseconds to wait after user types a character. 
        * This is helpful to reduce number of calls to remoteUrl based on performance consideration if it's set up properly based on how fast user usually types. 
        * Default is undefined which means the search request to remoteUrl will be fired immediately after user types a character.
+       * This propery only makes sense if remoteUrl is set up. 
        */
       remoteUrlWaitMs:{
         type:Number,
         value:undefined
+      },
+      /**
+       * A boolean property to indicate if there is a searching going on to remoteUrl.
+       * This propery only makes sense if remoteUrl is set up. 
+       */
+      remoteUrlSearching:{
+        type:Boolean,
+        value:false,
+        notify:true
       },
       /**
        * Input value.
@@ -407,6 +417,7 @@ If you want to save it in bower.json file, remember to add flag --save
       // this._suggestions = this._suggestions.concat(matched);
       if (typeof(this.remoteUrl) != 'undefined'){
         var pt_element = this;
+        pt_element.remoteUrlSearching = true;
         this.debounce('remoteUrlSearch', function(){
           var url = pt_element.remoteUrl.replace("%QUERY", term);
           var xmlhttp = new XMLHttpRequest();
@@ -414,14 +425,19 @@ If you want to save it in bower.json file, remember to add flag --save
           xmlhttp.setRequestHeader("Content-type", "application/json");
           var ptinput = pt_element;
           xmlhttp.onreadystatechange = function() {
-              if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
-                var resp = xmlhttp.response;
-                var remoteMatched = JSON.parse(resp);
-                var cuttedMatched = remoteMatched.slice(0,ptinput.maxSuggestions);
-                matched = matched.concat(cuttedMatched);
-                // ptinput._suggestions = ptinput._suggestions.concat(cuttedMatched);
-                ptinput._suggestions = matched;
+              if (xmlhttp.readyState === 4) {
+                if (xmlhttp.status == 200){
+                    var resp = xmlhttp.response;
+                    var remoteMatched = JSON.parse(resp);
+                    var cuttedMatched = remoteMatched.slice(0,ptinput.maxSuggestions);
+                    matched = matched.concat(cuttedMatched);
+                    // ptinput._suggestions = ptinput._suggestions.concat(cuttedMatched);
+                    ptinput._suggestions = matched;
+                }
+                pt_element.remoteUrlSearching = false;
               }
+
+
           }
           xmlhttp.send();
         }, this.remoteUrlWaitMs);        
