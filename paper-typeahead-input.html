@@ -175,7 +175,10 @@ If you want to save it in bower.json file, remember to add flag --save
       /**
        * Input value.
        */
-      inputValue: String,
+      inputValue:{
+        type:String,
+        notify:true
+      },
       /**
        * Bind this to the <paper-input>'s alwaysFloatLabel property.
        */
