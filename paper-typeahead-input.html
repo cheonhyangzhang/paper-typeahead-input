@@ -171,6 +171,13 @@ If you want to save it in bower.json file, remember to add flag --save
         type:Array,
         value:[]
       },
+       /**
+        * Variable to hold unformatted results (if formatter function is defined).
+        */
+      results: {
+       type:Array,
+       value:[]
+      },
       /**
        * Maximum number of suggestions to show up in typeahead.
        */
@@ -442,8 +449,14 @@ If you want to save it in bower.json file, remember to add flag --save
                     var remoteMatched = JSON.parse(resp);
                     var cuttedMatched = remoteMatched.slice(0,ptinput.maxSuggestions);
                     matched = matched.concat(cuttedMatched);
+                    if (pt_element.formatter) {
+                      ptinput._suggestions = pt_element.formatter(matched);
+                      ptinput.results = matched;
+                    } else {
+                      ptinput.results = matched;
+                      ptinput._suggestions = matched;
+                    }
                     // ptinput._suggestions = ptinput._suggestions.concat(cuttedMatched);
-                    ptinput._suggestions = matched;
                 }
                 pt_element.remoteUrlSearching = false;
                 pt_element.fire('pt-remote-searching-end',pt_element);
@@ -455,6 +468,7 @@ If you want to save it in bower.json file, remember to add flag --save
         }, this.remoteUrlWaitMs);        
       }
       else{
+        this.results = matched;
         this._suggestions = matched;
       }
     }
