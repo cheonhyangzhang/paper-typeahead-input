@@ -45,15 +45,18 @@ If you want to save it in bower.json file, remember to add flag --save
       display: block;
       box-sizing: border-box;
     }
+
     paper-material{
       left:0;
       right:0;
       position: absolute;
-      z-index: 10; 
+      z-index: 10;
     }
+
     paper-item{
       cursor: pointer;
     }
+
     .iron-selected{
       background: #E0E0E0;
     }
@@ -61,19 +64,20 @@ If you want to save it in bower.json file, remember to add flag --save
 
   <template>
     <template is="dom-if" if="{{label}}">
-     <h3>{{label}}</h3> 
+      <h3>{{label}}</h3>
     </template>
+
     <template is="dom-if" if="{{prefetchUrl}}">
     <iron-ajax
-    auto
-    url="{{prefetchUrl}}"
-    handle-as="json"
-    last-response="{{_prefetchedCandidates}}"
+      auto
+      url="{{prefetchUrl}}"
+      handle-as="json"
+      last-response="{{_prefetchedCandidates}}"
     ></iron-ajax>
     </template>
 
    <div style="position:relative;">
-    <paper-input value="{{inputValue}}" on-keyup="_keyup" on-keydown="_keydown"  label="{{placeholder}}"
+    <paper-input value="{{inputValue}}" on-keyup="_keyup" on-keydown="_keydown" label="{{placeholder}}"
       always-float-label="{{alwaysFloatLabel}}"
       autofocus="{{autofocus}}"
       char-counter="{{charCounter}}"
@@ -126,7 +130,7 @@ If you want to save it in bower.json file, remember to add flag --save
      * @event pt-remote-searching-start
      */
      /**
-     * Fired when remoteUrl is set up and http request on remoteUrl is finished. 
+     * Fired when remoteUrl is set up and http request on remoteUrl is finished.
      *
      * @event pt-remote-searching-end
      */
@@ -135,326 +139,350 @@ If you want to save it in bower.json file, remember to add flag --save
       /**
        * The label that will show up as the label for tags input. It not specified, no label will show up.
        */
-      label:{
-        type:String,
-        value:''
+      label: {
+        type: String,
+        value: ''
       },
       /**
        * The placeholder for the paper-input element.
        */
-      placeholder:{
-        type:String,
-        value:'Please enter values here'
+      placeholder: {
+        type: String,
+        value: 'Please enter values here'
       },
       /**
        * The candidates from local variable.
        */
-      localCandidates:{
-        type:Array,
-        value:[]
+      localCandidates: {
+        type: Array,
+        value: []
       },
       /**
-       * Url for a prefectched list in json format for the list of suggestion candidates. The response should be something like: ["a","b"] 
+       * Url for a prefectched list in json format for the list of suggestion candidates. The response should be something like:  ["a","b"]
        */
-      prefetchUrl:String,
+      prefetchUrl: String,
       /**
       * The prefetched candidates get by prefetchUrl
       */
-      _prefetchedCandidates:{
-        type:Array,
-        value:[]
+      _prefetchedCandidates: {
+        type: Array,
+        value: []
       },
       /**
        * Internal variable holding all matched suggestions.
        */
-      _suggestions:{
-        type:Array,
-        value:[]
+      _suggestions: {
+        type: Array,
+        value: []
       },
       /**
        * Maximum number of suggestions to show up in typeahead.
        */
-      maxSuggestions:{
-        type:Number,
-        value:5
+      maxSuggestions: {
+        type: Number,
+        value: 5
       },
       /**
        * Remote url to perform a search using the value in the input. The input value will be passed in as url parameter. The placeholder should be %QUERY.
        */
-      remoteUrl:String,      
+      remoteUrl: String,
        /**
-       * Number of milliseconds to wait after user types a character. 
-       * This is helpful to reduce number of calls to remoteUrl based on performance consideration if it's set up properly based on how fast user usually types. 
+       * Number of milliseconds to wait after user types a character.
+       * This is helpful to reduce number of calls to remoteUrl based on performance consideration if it's set up properly based on how fast user usually types.
        * Default is undefined which means the search request to remoteUrl will be fired immediately after user types a character.
-       * This propery only makes sense if remoteUrl is set up. 
+       * This propery only makes sense if remoteUrl is set up.
        */
-      remoteUrlWaitMs:{
-        type:Number,
-        value:undefined
+      remoteUrlWaitMs: {
+        type: Number,
+        value: undefined
       },
       /**
        * A boolean property to indicate if there is a searching going on to remoteUrl.
-       * This propery only makes sense if remoteUrl is set up. 
+       * This propery only makes sense if remoteUrl is set up.
        */
-      remoteUrlSearching:{
-        type:Boolean,
-        value:false,
-        notify:true
+      remoteUrlSearching: {
+        type: Boolean,
+        value: false,
+        notify: true
       },
       /**
        * Input value.
        */
-      inputValue:{
-        type:String,
-        notify:true
+      inputValue: {
+        type: String,
+        notify: true
       },
       /**
        * Bind this to the <paper-input>'s alwaysFloatLabel property.
        */
-      alwaysFloatLabel:Boolean,
+      alwaysFloatLabel: Boolean,
       /**
        * Bind this to the <paper-input>'s autofocus property.
        */
-      autofocus:Boolean,
+      autofocus: Boolean,
       /**
        * Bind this to the <paper-input>'s charCounter property.
        */
-      charCounter:Boolean,
+      charCounter: Boolean,
       /**
        * Bind this to the <paper-input>'s disabled property.
        */
-      disabled:Boolean,
+      disabled: Boolean,
       /**
        * Bind this to the <paper-input>'s errorMessage property.
        */
-      errorMessage:String,
+      errorMessage: String,
       /**
        * Bind this to the <paper-input>'s maxlength property.
        */
-      maxlength:Number,
+      maxlength: Number,
       /**
        * Bind this to the <paper-input>'s minlength property.
        */
-      minlength:Number, 
+      minlength: Number,
       /**
        * Bind this to the <paper-input>'s noLabelFloat property.
        */
-      noLabelFloat:Boolean,
+      noLabelFloat: Boolean,
       /**
        * Bind this to the <paper-input>'s readonly property.
        */
-      readonly:Boolean,
+      readonly: Boolean,
       /**
        * Bind this to the <paper-input>'s required property.
        */
-      required:Boolean,
+      required: Boolean,
       /**
        * Bind this to the <paper-input>'s autoValidate property.
        */
-      autoValidate:Boolean,
+      autoValidate: Boolean,
       /**
        * Bind this to the <paper-input>'s pattern property.
        */
-      pattern:String
+      pattern: String
     },
 
-    // Element Lifecycle
-
+    /**
+     * `ready` is called after all elements have been configured, but
+     * propagates bottom-up. This element's children are ready, but parents
+     * are not.
+     *
+     * This is the point where you should make modifications to the DOM (when
+     * necessary), or kick off any processes the element wants to perform.
+     */
     ready: function() {
-      // `ready` is called after all elements have been configured, but
-      // propagates bottom-up. This element's children are ready, but parents
-      // are not.
-      //
-      // This is the point where you should make modifications to the DOM (when
-      // necessary), or kick off any processes the element wants to perform.
-      document.addEventListener("click", function(){
-        var ptinputs = document.querySelectorAll('paper-typeahead-input')
-        for (var i = 0; i < ptinputs.length; i ++){
+      var input = this.querySelector('paper-input');
+      input.$.input.autocomplete = 'address-level4';
+
+      document.addEventListener("click", function() {
+        var ptinputs = document.querySelectorAll('paper-typeahead-input');
+
+        for (var i = 0; i < ptinputs.length; i ++) {
           var ptinput = ptinputs[i];
           ptinput._suggestions = [];
         }
       });
-      var input = this.querySelector('paper-input');
-      input.$.input.autocomplete = 'address-level4';
     },
 
-    attached: function() {
-      // `attached` fires once the element and its parents have been inserted
-      // into a document.
-      //
-      // This is a good place to perform any work related to your element's
-      // visual state or active behavior (measuring sizes, beginning animations,
-      // loading resources, etc).
-    },
+    /**
+     * `attached` fires once the element and its parents have been inserted
+     * into a document.
+     *
+     * This is a good place to perform any work related to your element's
+     * visual state or active behavior (measuring sizes, beginning animations,
+     * loading resources, etc).
+     */
+    attached: function() {},
 
-    detached: function() {
-      // The analog to `attached`, `detached` fires when the element has been
-      // removed from a document.
-      //
-      // Use this to clean up anything you did in `attached`.
-    },
-    _itemSelect:function(e, detail){
+    /**
+     * The analog to `attached`, `detached` fires when the element has been
+    * removed from a document.
+    *
+    * Use this to clean up anything you did in `attached`.
+    */
+    detached: function() {},
+
+    _itemSelect: function(e, detail) {
       this.fire('pt-item-select',detail);
     },
+
     // Element Behavior
     /**
      * Callback for keydown event
      *
      * @param {e} event
      */
+
     _keydown: function(e) {
-      if (e.which == 40 || e.which == 38){
-          e.preventDefault();
+      if (e.which == 40 || e.which == 38) {
+        e.preventDefault();
       }
     },
+
     /**
      * Callback on mouseover event on paper-item
      *
      */
-    _selecton:function(e){
-      var suggestionsMenu = this.querySelector('paper-menu');
-      if (suggestionsMenu && typeof(suggestionsMenu) != 'undefined'){
-        var selectedItem = e.currentTarget;
+    _selecton: function(e) {
+      var suggestionsMenu = this.querySelector('paper-menu'),
+          input = this.querySelector('paper-input'),
+          selectedItem = e.currentTarget;
+
+      if (suggestionsMenu && typeof(suggestionsMenu) != 'undefined') {
         index = Number(suggestionsMenu.indexOf(selectedItem));
         suggestionsMenu.select(index);
-        var input = this.querySelector('paper-input');
         input.$.input.focus();
       }
-      else{
+      else {
         console.log("suggestionsMenu not defined");
       }
     },
+
     /**
      * Callback on click event on paper-item
      *
      */
     _select: function(e) {
-      var suggestionsMenu = this.querySelector('paper-menu');
-      if (suggestionsMenu && typeof(suggestionsMenu) != 'undefined'){
-        var selectedItem = e.currentTarget;
+      var suggestionsMenu = this.querySelector('paper-menu'),
+          selectedItem = e.currentTarget;
+
+      if (suggestionsMenu && typeof(suggestionsMenu) != 'undefined') {
         index = Number(suggestionsMenu.indexOf(selectedItem));
         this.inputValue = this._suggestions[index];
         this._suggestions = [];
-        this.fire('pt-item-confirmed',e.target);
+        this.fire('pt-item-confirmed', e.target);
         e.stopPropagation();
       }
-      else{
+      else {
         console.log("suggestionsMenu not defined");
       }
     },
+
     /**
      * Callback for keyup event
      *
      * @param {e} event
      */
     _keyup: function(e) {
-      if (e.which == 40){
-        //down button
-        var suggestionsMenu = this.querySelector('paper-menu');
-        var selectedItem = suggestionsMenu.focusedItem;
-        var index = 0;
-        if (typeof(selectedItem) != 'undefined'){
+      var suggestionsMenu = this.querySelector('paper-menu'),
+          input = this.querySelector('paper-input'),
+          selectedItem,
+          index = 0;
+
+      if (e.which == 40) {
+        // down button
+        selectedItem = suggestionsMenu.focusedItem;
+
+        if (typeof(selectedItem) != 'undefined') {
           index = Number(suggestionsMenu.indexOf(selectedItem));
           index = Math.min(index + 1, this._suggestions.length - 1);
         }
+
         suggestionsMenu.select(index);
-        var input = this.querySelector('paper-input');
         input.$.input.focus();
       }
-      else if (e.which == 38){
-        //up
-        var suggestionsMenu = this.querySelector('paper-menu');
-        var selectedItem = suggestionsMenu.focusedItem;
-        if (typeof(selectedItem) != 'undefined'){
+      else if (e.which == 38) {
+        // up
+        selectedItem = suggestionsMenu.focusedItem;
+
+        if (typeof(selectedItem) != 'undefined') {
           index = Number(suggestionsMenu.indexOf(selectedItem));
           index = Math.max(index - 1, -1);
           suggestionsMenu.select(index);
         }
-        var input = this.querySelector('paper-input');
+
         input.$.input.focus();
       }
-      else if (e.which == 13){
-        var suggestionsMenu = this.querySelector('paper-menu');
-        if (suggestionsMenu && typeof(suggestionsMenu) != 'undefined'){
-          var selectedItem = suggestionsMenu.focusedItem;
-          if (typeof(selectedItem) != 'undefined'){
+      else if (e.which == 13) {
+        // enter
+        selectedItem = suggestionsMenu.focusedItem;
+
+        if (suggestionsMenu && typeof(suggestionsMenu) != 'undefined') {
+          if (typeof(selectedItem) != 'undefined') {
             index = Number(suggestionsMenu.indexOf(selectedItem));
             this.inputValue = this._suggestions[index];
             this._suggestions = [];
+
             this.fire('pt-item-confirmed',selectedItem);
           }
         }
       }
-      else{
-        var suggestionsMenu = this.querySelector('paper-menu');
-        if (suggestionsMenu && typeof(suggestionsMenu) != 'undefined'){
+      else {
+        if (suggestionsMenu && typeof(suggestionsMenu) != 'undefined') {
           suggestionsMenu.select(-1);
         }
-        // if (this.inputValue.length >= 3){
+
         this._search(this.inputValue.trim());
-        // this._suggestions = this._search(this.inputValue.trim());
-        // }
       }
     },
-    _search:function(term){
-      if (term == ""){
+
+    _search:function(term) {
+      var patt =  new RegExp(term.toLowerCase()),
+          matched = [];
+
+      if (term == "") {
         this._suggestions = [];
         return;
       }
-      var patt =  new RegExp(term.toLowerCase());
-      var matched = [];
-      if (typeof(this.localCandidates) != 'undefined'){
-        for (var i = 0; i < this.localCandidates.length; i ++){
-          if (matched.length == this.maxSuggestions){
+
+      if (typeof(this.localCandidates) != 'undefined') {
+        for (var i = 0; i < this.localCandidates.length; i ++) {
+          if (matched.length == this.maxSuggestions) {
             break;
           }
-          if (patt.test(this.localCandidates[i].toLowerCase()) == true){
+
+          if (patt.test(this.localCandidates[i].toLowerCase()) == true) {
             matched.push(this.localCandidates[i]);
           }
         }
       }
-      
-      if (typeof(this._prefetchedCandidates) != 'undefined'){
-        for (var i = 0; i < this._prefetchedCandidates.length; i ++){
+
+      if (typeof(this._prefetchedCandidates) != 'undefined') {
+        for (var i = 0; i < this._prefetchedCandidates.length; i ++) {
           if (matched.length == this.maxSuggestions){
             break;
           }
-          if (patt.test(this._prefetchedCandidates[i].toLowerCase()) == true){
+
+          if (patt.test(this._prefetchedCandidates[i].toLowerCase()) == true) {
             matched.push(this._prefetchedCandidates[i]);
           }
         }
       }
-      // this._suggestions = this._suggestions.concat(matched);
-      if (typeof(this.remoteUrl) != 'undefined'){
+
+      if (typeof(this.remoteUrl) != 'undefined') {
         var pt_element = this;
+
         pt_element.fire('pt-remote-searching-start',pt_element);
         pt_element.remoteUrlSearching = true;
-        this.debounce('remoteUrlSearch', function(){
-          var url = pt_element.remoteUrl.replace("%QUERY", term);
-          var xmlhttp = new XMLHttpRequest();
+
+        this.debounce('remoteUrlSearch', function() {
+          var url = pt_element.remoteUrl.replace("%QUERY", term),
+              ptinput = pt_element,
+              xmlhttp = new XMLHttpRequest();
+
           xmlhttp.open('GET', url, true);
           xmlhttp.setRequestHeader("Content-type", "application/json");
-          var ptinput = pt_element;
+
           xmlhttp.onreadystatechange = function() {
               if (xmlhttp.readyState === 4) {
-                if (xmlhttp.status == 200){
-                    var resp = xmlhttp.response;
-                    var remoteMatched = JSON.parse(resp);
-                    var cuttedMatched = remoteMatched.slice(0,ptinput.maxSuggestions);
+                if (xmlhttp.status == 200) {
+                    var resp = xmlhttp.response,
+                        remoteMatched = JSON.parse(resp),
+                        cuttedMatched = remoteMatched.slice(0,ptinput.maxSuggestions);
+
                     matched = matched.concat(cuttedMatched);
-                    // ptinput._suggestions = ptinput._suggestions.concat(cuttedMatched);
                     ptinput._suggestions = matched;
                 }
+
                 pt_element.remoteUrlSearching = false;
                 pt_element.fire('pt-remote-searching-end',pt_element);
               }
-
-
           }
+
           xmlhttp.send();
-        }, this.remoteUrlWaitMs);        
+        }, this.remoteUrlWaitMs);
       }
-      else{
+      else {
         this._suggestions = matched;
       }
     }
