@@ -274,7 +274,7 @@ If you want to save it in bower.json file, remember to add flag --save
           ptinput._suggestions = [];
         }
       });
-      var input = this.querySelector('paper-input');
+      var input = Polymer.dom(this.root).querySelector('paper-input');
       input.$.input.autocomplete = 'address-level4';
     },
 
@@ -312,12 +312,12 @@ If you want to save it in bower.json file, remember to add flag --save
      *
      */
     _selecton:function(e){
-      var suggestionsMenu = this.querySelector('paper-menu');
+      var suggestionsMenu = Polymer.dom(this.root).querySelector('paper-menu');
       if (suggestionsMenu && typeof(suggestionsMenu) != 'undefined'){
         var selectedItem = e.currentTarget;
         index = Number(suggestionsMenu.indexOf(selectedItem));
         suggestionsMenu.select(index);
-        var input = this.querySelector('paper-input');
+        var input = Polymer.dom(this.root).querySelector('paper-input');
         input.$.input.focus();
       }
       else{
@@ -329,7 +329,7 @@ If you want to save it in bower.json file, remember to add flag --save
      *
      */
     _select: function(e) {
-      var suggestionsMenu = this.querySelector('paper-menu');
+      var suggestionsMenu = Polymer.dom(this.root).querySelector('paper-menu');
       if (suggestionsMenu && typeof(suggestionsMenu) != 'undefined'){
         var selectedItem = e.currentTarget;
         index = Number(suggestionsMenu.indexOf(selectedItem));
@@ -350,7 +350,7 @@ If you want to save it in bower.json file, remember to add flag --save
     _keyup: function(e) {
       if (e.which == 40){
         //down button
-        var suggestionsMenu = this.querySelector('paper-menu');
+        var suggestionsMenu = Polymer.dom(this.root).querySelector('paper-menu');
         var selectedItem = suggestionsMenu.focusedItem;
         var index = 0;
         if (typeof(selectedItem) != 'undefined'){
@@ -358,23 +358,23 @@ If you want to save it in bower.json file, remember to add flag --save
           index = Math.min(index + 1, this._suggestions.length - 1);
         }
         suggestionsMenu.select(index);
-        var input = this.querySelector('paper-input');
+        var input = Polymer.dom(this.root).querySelector('paper-input');
         input.$.input.focus();
       }
       else if (e.which == 38){
         //up
-        var suggestionsMenu = this.querySelector('paper-menu');
+        var suggestionsMenu = Polymer.dom(this.root).querySelector('paper-menu');
         var selectedItem = suggestionsMenu.focusedItem;
         if (typeof(selectedItem) != 'undefined'){
           index = Number(suggestionsMenu.indexOf(selectedItem));
           index = Math.max(index - 1, -1);
           suggestionsMenu.select(index);
         }
-        var input = this.querySelector('paper-input');
+        var input = Polymer.dom(this.root).querySelector('paper-input');
         input.$.input.focus();
       }
       else if (e.which == 13){
-        var suggestionsMenu = this.querySelector('paper-menu');
+        var suggestionsMenu = Polymer.dom(this.root).querySelector('paper-menu');
         if (suggestionsMenu && typeof(suggestionsMenu) != 'undefined'){
           var selectedItem = suggestionsMenu.focusedItem;
           if (typeof(selectedItem) != 'undefined'){
@@ -386,7 +386,7 @@ If you want to save it in bower.json file, remember to add flag --save
         }
       }
       else{
-        var suggestionsMenu = this.querySelector('paper-menu');
+        var suggestionsMenu = Polymer.dom(this.root).querySelector('paper-menu');
         if (suggestionsMenu && typeof(suggestionsMenu) != 'undefined'){
           suggestionsMenu.select(-1);
         }
