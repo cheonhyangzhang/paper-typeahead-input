@@ -92,7 +92,7 @@ If you want to save it in bower.json file, remember to add flag --save
     <paper-material >
     <paper-menu on-iron-select="_itemSelect">
       <template is="dom-repeat" items="{{_suggestions}}">
-        <paper-item on-mouseover="_selecton" on-tap="_select">
+        <paper-item on-mouseover="_selection" on-tap="_select">
         <span>{{item}}</span>
         </paper-item>
       </template>
@@ -311,7 +311,7 @@ If you want to save it in bower.json file, remember to add flag --save
      * Callback on mouseover event on paper-item
      *
      */
-    _selecton:function(e){
+    _selection:function(e){
       var suggestionsMenu = Polymer.dom(this.root).querySelector('paper-menu');
       if (suggestionsMenu && typeof(suggestionsMenu) != 'undefined'){
         var selectedItem = e.currentTarget;
