@@ -49,7 +49,7 @@ If you want to save it in bower.json file, remember to add flag --save
       left:0;
       right:0;
       position: absolute;
-      z-index: 10; 
+      z-index: 10;
     }
     paper-item{
       cursor: pointer;
@@ -61,7 +61,7 @@ If you want to save it in bower.json file, remember to add flag --save
 
   <template>
     <template is="dom-if" if="{{label}}">
-     <h3>{{label}}</h3> 
+     <h3>{{label}}</h3>
     </template>
     <template is="dom-if" if="{{prefetchUrl}}">
     <iron-ajax
@@ -126,7 +126,7 @@ If you want to save it in bower.json file, remember to add flag --save
      * @event pt-remote-searching-start
      */
      /**
-     * Fired when remoteUrl is set up and http request on remoteUrl is finished. 
+     * Fired when remoteUrl is set up and http request on remoteUrl is finished.
      *
      * @event pt-remote-searching-end
      */
@@ -154,7 +154,7 @@ If you want to save it in bower.json file, remember to add flag --save
         value:[]
       },
       /**
-       * Url for a prefectched list in json format for the list of suggestion candidates. The response should be something like: ["a","b"] 
+       * Url for a prefectched list in json format for the list of suggestion candidates. The response should be something like: ["a","b"]
        */
       prefetchUrl:String,
       /**
@@ -181,12 +181,12 @@ If you want to save it in bower.json file, remember to add flag --save
       /**
        * Remote url to perform a search using the value in the input. The input value will be passed in as url parameter. The placeholder should be %QUERY.
        */
-      remoteUrl:String,      
+      remoteUrl:String,
        /**
-       * Number of milliseconds to wait after user types a character. 
-       * This is helpful to reduce number of calls to remoteUrl based on performance consideration if it's set up properly based on how fast user usually types. 
+       * Number of milliseconds to wait after user types a character.
+       * This is helpful to reduce number of calls to remoteUrl based on performance consideration if it's set up properly based on how fast user usually types.
        * Default is undefined which means the search request to remoteUrl will be fired immediately after user types a character.
-       * This propery only makes sense if remoteUrl is set up. 
+       * This propery only makes sense if remoteUrl is set up.
        */
       remoteUrlWaitMs:{
         type:Number,
@@ -194,7 +194,7 @@ If you want to save it in bower.json file, remember to add flag --save
       },
       /**
        * A boolean property to indicate if there is a searching going on to remoteUrl.
-       * This propery only makes sense if remoteUrl is set up. 
+       * This propery only makes sense if remoteUrl is set up.
        */
       remoteUrlSearching:{
         type:Boolean,
@@ -235,7 +235,7 @@ If you want to save it in bower.json file, remember to add flag --save
       /**
        * Bind this to the <paper-input>'s minlength property.
        */
-      minlength:Number, 
+      minlength:Number,
       /**
        * Bind this to the <paper-input>'s noLabelFloat property.
        */
@@ -413,7 +413,7 @@ If you want to save it in bower.json file, remember to add flag --save
           }
         }
       }
-      
+
       if (typeof(this._prefetchedCandidates) != 'undefined'){
         for (var i = 0; i < this._prefetchedCandidates.length; i ++){
           if (matched.length == this.maxSuggestions){
@@ -452,7 +452,7 @@ If you want to save it in bower.json file, remember to add flag --save
 
           }
           xmlhttp.send();
-        }, this.remoteUrlWaitMs);        
+        }, this.remoteUrlWaitMs);
       }
       else{
         this._suggestions = matched;
