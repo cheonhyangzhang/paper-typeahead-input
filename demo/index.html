@@ -93,10 +93,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </paper-material>
 
 
+    <paper-material class="demo"  elevation="1">
+    <paper-material class="demo"  elevation="1">
+    <code>&lt;paper-typeahead-input prefetch-url="http://cheonhyangzhang.github.io/paper-typeahead-input/components/paper-typeahead-input/countries.json" max-suggestions="5" label="States in JSON object"  display-prop="name" searchable-props="{{searchable}}" is-candidates-json="true"  placeholder="Search for US states by state name or state nickname"&gt;
+    &lt;/paper-typeahead-input&gt;
+    </code>
+    </paper-material>
+     <paper-typeahead-input prefetch-url="http://cheonhyangzhang.github.io/paper-typeahead-input/components/paper-typeahead-input/statesInObjects.json" max-suggestions="5" label="States in JSON object" display-prop="name" searchable-props="{{searchable}}" is-candidates-json="true" placeholder="Search for US states by state name or state nickname">
+    </paper-typeahead-input>
+    </paper-material>
+
+
     <script>
         window.addEventListener('WebComponentsReady', function() {
         var app = document.querySelector('#app');
         app.test1 = true;
+        app.searchable = ["name","nickname"];
         app.isSearching = false;
         app.states = [
            "Alabama",

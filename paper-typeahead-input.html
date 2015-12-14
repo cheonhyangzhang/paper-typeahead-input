@@ -92,9 +92,16 @@ If you want to save it in bower.json file, remember to add flag --save
     <paper-material >
     <paper-menu on-iron-select="_itemSelect">
       <template is="dom-repeat" items="{{_suggestions}}">
-        <paper-item on-mouseover="_selection" on-tap="_select">
-        <span>{{item}}</span>
-        </paper-item>
+        <template is="dom-if" if="{{isCandidatesJson}}"> 
+          <paper-item on-mouseover="_selection" on-tap="_select">
+           <span>{{_getDisplayValue(item)}}</span>
+          </paper-item>
+        </template>
+        <template is="dom-if" if="{{!isCandidatesJson}}"> 
+          <paper-item on-mouseover="_selection" on-tap="_select">
+           <span>{{item}}</span>
+          </paper-item>
+        </template>
       </template>
     </paper-menu>
     </paper-material>
@@ -193,6 +200,30 @@ If you want to save it in bower.json file, remember to add flag --save
         value:undefined
       },
       /**
+       * A boolean property to indicate if elements in the candidates list are json dictionary. 
+       * When this property set up to be true, the candidates will be treated as list of json objects. Otherwise will be treated as list of strings.
+       */
+      isCandidatesJson:{
+        type:Boolean,
+        value:false
+      },
+      /**
+       * An array to tell what property in the json object of candidate is searchable. 
+       * This property only makes sense when property isCandidatesJson set to be true.
+       */
+      searchableProps:{
+        type:Array,
+        value:[]
+      },
+      /**
+        * The property in json object that should be chosen for the paper-input value when an element is selected from the suggestions.
+        * This property only makes sense when property isCandidatesJson set to be true.
+        */
+      displayProp:{
+        type:String,
+        value:"undefined"
+      },
+      /**
        * A boolean property to indicate if there is a searching going on to remoteUrl.
        * This propery only makes sense if remoteUrl is set up.
        */
@@ -206,6 +237,13 @@ If you want to save it in bower.json file, remember to add flag --save
        */
       inputValue:{
         type:String,
+        notify:true
+      },
+      /**
+       * Input object.
+       */
+      inputObject:{
+        type:Object,
         notify:true
       },
       /**
@@ -333,7 +371,15 @@ If you want to save it in bower.json file, remember to add flag --save
       if (suggestionsMenu && typeof(suggestionsMenu) != 'undefined'){
         var selectedItem = e.currentTarget;
         index = Number(suggestionsMenu.indexOf(selectedItem));
-        this.inputValue = this._suggestions[index];
+
+        if (this.isCandidatesJson == true){
+          this.inputObject = this._suggestions[index];
+          this.inputValue = this._getDisplayValue(this.inputObject);
+        } 
+        else{
+          this.inputValue = this._suggestions[index];
+        }
+
         this._suggestions = [];
         this.fire('pt-item-confirmed',e.target);
         e.stopPropagation();
@@ -379,7 +425,14 @@ If you want to save it in bower.json file, remember to add flag --save
           var selectedItem = suggestionsMenu.focusedItem;
           if (typeof(selectedItem) != 'undefined'){
             index = Number(suggestionsMenu.indexOf(selectedItem));
-            this.inputValue = this._suggestions[index];
+
+            if (this.isCandidatesJson == true){
+              this.inputObject = this._suggestions[index];
+              this.inputValue = this._getDisplayValue(this.inputObject);
+            } 
+            else{
+              this.inputValue = this._suggestions[index];
+            }
             this._suggestions = [];
             this.fire('pt-item-confirmed',selectedItem);
           }
@@ -396,6 +449,29 @@ If you want to save it in bower.json file, remember to add flag --save
         // }
       }
     },
+    _getDisplayValue:function(item){
+      if (this.displayProp && typeof(this.displayProp) != 'undefined'){
+        return item[this.displayProp];
+      }
+      else{
+        console.log("paper-typeahead-input: displayProp not set up");
+        return "";
+      }
+    },
+    _getTestCandidate:function(item){
+      if (this.isCandidatesJson == true){
+        var toTest = [];
+        for (var i = 0; i < this.searchableProps.length; i ++){
+          if (item[this.searchableProps[i]] != "undefined"){
+            toTest.push(item[this.searchableProps[i]]);
+          }
+        }
+        return toTest;
+      }
+      else{
+        return [item];
+      }
+    },
     _search:function(term){
       if (term == ""){
         this._suggestions = [];
@@ -403,24 +479,34 @@ If you want to save it in bower.json file, remember to add flag --save
       }
       var patt =  new RegExp(term.toLowerCase());
       var matched = [];
+
       if (typeof(this.localCandidates) != 'undefined'){
         for (var i = 0; i < this.localCandidates.length; i ++){
           if (matched.length == this.maxSuggestions){
             break;
           }
-          if (patt.test(this.localCandidates[i].toLowerCase()) == true){
-            matched.push(this.localCandidates[i]);
+          var toTest = this._getTestCandidate(this.localCandidates[i]);
+          for (var j = 0; j < toTest.length; j ++){
+            var item = toTest[j];
+            if (patt.test(item.toLowerCase()) == true){
+              matched.push(this.localCandidates[i]);
+              break;
+            }
           }
         }
       }
-
       if (typeof(this._prefetchedCandidates) != 'undefined'){
         for (var i = 0; i < this._prefetchedCandidates.length; i ++){
           if (matched.length == this.maxSuggestions){
             break;
           }
-          if (patt.test(this._prefetchedCandidates[i].toLowerCase()) == true){
-            matched.push(this._prefetchedCandidates[i]);
+          var toTest = this._getTestCandidate(this._prefetchedCandidates[i]);
+          for (var j = 0; j < toTest.length; j ++){
+            var item = toTest[j];
+            if (patt.test(item.toLowerCase()) == true){
+              matched.push(this._prefetchedCandidates[i]);
+              break;
+            }
           }
         }
       }
