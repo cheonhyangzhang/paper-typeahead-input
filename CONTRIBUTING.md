@@ -26,7 +26,11 @@ Here's what you need to do before start working on the code:
 
         git remote add upstream https://github.com/cheonhyangzhang/paper-typeahead-input
 
-7. Run local server
+7. Install all the bower packages
+
+        bower install
+
+8. Run local server
 
         polyserve -p <port_number>
 
