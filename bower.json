@@ -21,9 +21,9 @@
   ],
   "dependencies": {
     "polymer": "Polymer/polymer#^1.0.0",
-    "paper-input": "PolymerElements/paper-input#~1.0.5",
-    "paper-menu": "PolymerElements/paper-menu#~1.0.0",
-    "paper-item": "PolymerElements/paper-item#~1.0.1"
+    "paper-input": "PolymerElements/paper-input#^1.0.5",
+    "paper-menu": "PolymerElements/paper-menu#^1.0.0",
+    "paper-item": "PolymerElements/paper-item#^1.0.1"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
