@@ -22,33 +22,30 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <body>
 
     <!-- You can use the document as a place to set up your fixtures. -->
-    <paper-typeahead-input></paper-typeahead-input>
+    <test-fixture id="properties">
+      <template>
+        <paper-typeahead-input></paper-typeahead-input>
+      </template>
+    </test-fixture>
 
     <script>
-      var myEl = document.querySelector('paper-typeahead-input');
-
-      suite('<paper-typeahead-input>', function() {
-
-        test('defines the "author" property', function() {
-          assert.equal(myEl.author.name, 'Dimitri Glazkov');
-          assert.equal(myEl.author.image, 'http://addyosmani.com/blog/wp-content/uploads/2013/04/unicorn.jpg');
+      suite('paper-typeahead-input properties are defined as expected', function() {
+        var myEl;
+        setup(function() {
+          myEl = fixture('properties');
         });
-
-        test('says hello', function() {
-          assert.equal(myEl.sayHello(), 'paper-typeahead-input says, Hello World!');
-
-          var greetings = myEl.sayHello('greetings Earthlings');
-          assert.equal(greetings, 'paper-typeahead-input says, greetings Earthlings');
-        });
-
-        test('fires lasers', function(done) {
-          myEl.addEventListener('paper-typeahead-input-lasers', function(event) {
-            assert.equal(event.detail.sound, 'Pew pew!');
-            done();
-          });
-          myEl.fireLasers();
-        });
-
+        // test('says hello', function() {
+        //   assert.equal(myEl.sayHello(), 'paper-typeahead-input says, Hello World!');
+        //   var greetings = myEl.sayHello('greetings Earthlings');
+        //   assert.equal(greetings, 'paper-typeahead-input says, greetings Earthlings');
+        // });
+        // test('fires lasers', function(done) {
+        //   myEl.addEventListener('paper-typeahead-input-lasers', function(event) {
+        //     assert.equal(event.detail.sound, 'Pew pew!');
+        //     done();
+        //   });
+        //   myEl.fireLasers();
+        // });
       });
     </script>
 
