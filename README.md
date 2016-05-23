@@ -37,6 +37,8 @@ And you can run it via:
 Once running, you can preview your element at
 `http://localhost:8080/components/paper-typeahead-input/`, where `paper-typeahead-input` is the name of the directory containing it.
 
+## Want to contribute?
+Please read the [CONTRIBUTING.md](https://github.com/cheonhyangzhang/paper-typeahead-input/blob/master/CONTRIBUTING.md) before making your changes.
 
 ## Testing Your Element
 
