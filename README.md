@@ -6,6 +6,7 @@ An element providing a starting point for your own reusable Polymer elements.
 
 ## Demo
 
+
 [Documentation and Demo](http://cheonhyangzhang.github.io/paper-typeahead-input/components/paper-typeahead-input/)
 
 ## Installation
