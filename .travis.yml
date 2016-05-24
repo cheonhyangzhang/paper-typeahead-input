@@ -9,5 +9,8 @@ before_install:
   - "sh -e /etc/init.d/xvfb start"
 script:
   - "wct"
-after_success:
-  - "bash ./gpages.sh cheonhyangzhang paper-typeahead-input"
+deploy:
+  provider: script
+  script: "bash ./gpages.sh cheonhyangzhang paper-typeahead-input"
+  on:
+    branch: release
