@@ -1,7 +1,6 @@
 # paper-typeahead-input
 
 [![Travis](https://img.shields.io/travis/cheonhyangzhang/paper-typeahead-input.svg?style=flat)](https://travis-ci.org/cheonhyangzhang/paper-typeahead-input)
-[![Coveralls](https://img.shields.io/coveralls/cheonhyangzhang/paper-typeahead-input.svg?style=flat)](https://coveralls.io/r/cheonhyangzhang/paper-typeahead-input?branch=master)
 
 An element providing a starting point for your own reusable Polymer elements.
 
