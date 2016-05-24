@@ -60,6 +60,7 @@ If you want to save it in bower.json file, remember to add flag --save
   </style>
 
   <template>
+    <h1>Typeahead: {{_typeahead}}</h1>
     <template is="dom-if" if="{{label}}">
      <h3>{{label}}</h3>
     </template>
@@ -177,6 +178,13 @@ If you want to save it in bower.json file, remember to add flag --save
       _suggestions:{
         type:Array,
         value:[]
+      },
+      /**
+       * Internal variable holding all matched suggestions.
+       */
+      _typeahead:{
+        type:String,
+        value:""
       },
       /**
        * Maximum number of suggestions to show up in typeahead.
@@ -363,8 +371,39 @@ If you want to save it in bower.json file, remember to add flag --save
       }
     },
     /**
+     * Return inputValue
+     * @return {[type]} [description]
+     */
+    _getInputValue: function() {
+      return this.inputValue.trim();
+    },
+    /**
+     * Update the text to show for typeahead
+     */
+    _updateTypeahead: function() {
+      console.log("_updateTypeahead");
+      if (this._suggestions.length == 0){
+        this._typeahead = "";
+        return;
+      }
+      var firstSuggestion = this._suggestions[0];
+      console.log("check if empty");
+      console.log(this._getInputValue())
+      console.log(this._getInputValue() == "")
+      if (this._getInputValue() == "") {
+        this._typeahead = "";
+        return;
+      }
+      if (firstSuggestion.toLowerCase().indexOf(this._getInputValue().toLowerCase())!=0) {
+        this._typeahead = "";
+        return;
+      }
+      this._typeahead = firstSuggestion;
+      console.log("final typeahead");
+      console.log(this._typeahead);
+    },
+    /**
      * Callback on click event on paper-item
-     *
      */
     _select: function(e) {
       var suggestionsMenu = Polymer.dom(this.root).querySelector('paper-menu');
@@ -475,6 +514,7 @@ If you want to save it in bower.json file, remember to add flag --save
     _search:function(term){
       if (term == ""){
         this._suggestions = [];
+        this._updateTypeahead();
         return;
       }
       var patt =  new RegExp(term.toLowerCase());
@@ -543,7 +583,8 @@ If you want to save it in bower.json file, remember to add flag --save
       else{
         this._suggestions = matched;
       }
-    }
+      this._updateTypeahead();
+    }//_search
 
   });
 
