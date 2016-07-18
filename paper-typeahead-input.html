@@ -57,6 +57,24 @@ If you want to save it in bower.json file, remember to add flag --save
     .iron-selected{
       background: #E0E0E0;
     }
+    .typeahead{
+      font-family: 'Roboto', 'Noto', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 24px;color: #737373;
+    }
+    .typeahead::first-letter{
+      visibility: hidden;
+    }
+    .typeahead-with-label{
+      position:absolute;
+      top:12px;
+    }
+    .typeahead-without-label{
+      position:absolute;
+      top:-8px;
+    }
   </style>
 
   <template>
@@ -74,6 +92,7 @@ If you want to save it in bower.json file, remember to add flag --save
     </template>
 
    <div style="position:relative;">
+    <p class$="typeahead {{_getTypeaheadClasses(noLabelFloat)}}">{{_getTypeaheadDisplay(_typeahead)}}</p>
     <paper-input value="{{inputValue}}" on-keyup="_keyup" on-keydown="_keydown"  label="{{placeholder}}"
       always-float-label="{{alwaysFloatLabel}}"
       autofocus="{{autofocus}}"
@@ -93,12 +112,12 @@ If you want to save it in bower.json file, remember to add flag --save
     <paper-material >
     <paper-menu on-iron-select="_itemSelect">
       <template is="dom-repeat" items="{{_suggestions}}">
-        <template is="dom-if" if="{{isCandidatesJson}}"> 
+        <template is="dom-if" if="{{isCandidatesJson}}">
           <paper-item on-mouseover="_selection" on-tap="_select">
            <span>{{_getDisplayValue(item)}}</span>
           </paper-item>
         </template>
-        <template is="dom-if" if="{{!isCandidatesJson}}"> 
+        <template is="dom-if" if="{{!isCandidatesJson}}">
           <paper-item on-mouseover="_selection" on-tap="_select">
            <span>{{item}}</span>
           </paper-item>
@@ -208,7 +227,7 @@ If you want to save it in bower.json file, remember to add flag --save
         value:undefined
       },
       /**
-       * A boolean property to indicate if elements in the candidates list are json dictionary. 
+       * A boolean property to indicate if elements in the candidates list are json dictionary.
        * When this property set up to be true, the candidates will be treated as list of json objects. Otherwise will be treated as list of strings.
        */
       isCandidatesJson:{
@@ -216,7 +235,7 @@ If you want to save it in bower.json file, remember to add flag --save
         value:false
       },
       /**
-       * An array to tell what property in the json object of candidate is searchable. 
+       * An array to tell what property in the json object of candidate is searchable.
        * This property only makes sense when property isCandidatesJson set to be true.
        */
       searchableProps:{
@@ -339,6 +358,19 @@ If you want to save it in bower.json file, remember to add flag --save
       //
       // Use this to clean up anything you did in `attached`.
     },
+    _getTypeaheadDisplay:function(_typeahead){
+      var input = this._getInputValue();
+      if (input)
+      return input.substring(0,1) + _typeahead.substring(1);
+    },
+    _getTypeaheadClasses:function(noLabelFloat){
+      console.log("_getTypeaheadClasses");
+      console.log(noLabelFloat);
+      if (noLabelFloat && typeof(noLabelFloat) != 'undefined' && noLabelFloat == true) {
+        return "typeahead-without-label";
+      }
+      return "typeahead-with-label";
+    },
     _itemSelect:function(e, detail){
       this.fire('pt-item-select',detail);
     },
@@ -375,21 +407,20 @@ If you want to save it in bower.json file, remember to add flag --save
      * @return {[type]} [description]
      */
     _getInputValue: function() {
-      return this.inputValue.trim();
+      if (this.inputValue && typeof(this.inputValue) != 'undefined'){
+        return this.inputValue.trim();
+      }
+      return "";
     },
     /**
      * Update the text to show for typeahead
      */
     _updateTypeahead: function() {
-      console.log("_updateTypeahead");
       if (this._suggestions.length == 0){
         this._typeahead = "";
         return;
       }
       var firstSuggestion = this._suggestions[0];
-      console.log("check if empty");
-      console.log(this._getInputValue())
-      console.log(this._getInputValue() == "")
       if (this._getInputValue() == "") {
         this._typeahead = "";
         return;
@@ -399,8 +430,6 @@ If you want to save it in bower.json file, remember to add flag --save
         return;
       }
       this._typeahead = firstSuggestion;
-      console.log("final typeahead");
-      console.log(this._typeahead);
     },
     /**
      * Callback on click event on paper-item
@@ -414,13 +443,14 @@ If you want to save it in bower.json file, remember to add flag --save
         if (this.isCandidatesJson == true){
           this.inputObject = this._suggestions[index];
           this.inputValue = this._getDisplayValue(this.inputObject);
-        } 
+        }
         else{
           this.inputValue = this._suggestions[index];
         }
 
         this._suggestions = [];
         this.fire('pt-item-confirmed',e.target);
+        this._typeahead = "";
         e.stopPropagation();
       }
       else{
@@ -468,12 +498,13 @@ If you want to save it in bower.json file, remember to add flag --save
             if (this.isCandidatesJson == true){
               this.inputObject = this._suggestions[index];
               this.inputValue = this._getDisplayValue(this.inputObject);
-            } 
+            }
             else{
               this.inputValue = this._suggestions[index];
             }
             this._suggestions = [];
             this.fire('pt-item-confirmed',selectedItem);
+            this._typeahead = "";
           }
         }
       }
