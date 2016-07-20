@@ -19,7 +19,7 @@ org=$1
 repo=$2
 name="Tianxiang Zhang"
 email="cenhiangapply@gmail.com"
-branch=${3:-"master"} # default to master when branch isn't specified
+branch=${3:-"release"} # default to release when branch isn't specified
 
 rm -rf temp
 mkdir temp && cd temp
@@ -55,7 +55,7 @@ git config user.email $email
 # send it all to github
 git add -A .
 git commit -am 'Deploy to Github Pages'
-git push --force --quiet -u "https://${GH_TOKEN}@github.com/${org}/${repo}" gh-pages > /dev/null 2>&1
+git push --force --quiet -u "https://${org}:${GH_TOKEN}@github.com/${org}/${repo}" gh-pages > /dev/null 2>&1
 
 popd >/dev/null
 rm -rf temp
