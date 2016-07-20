@@ -233,6 +233,21 @@ If you want to save it in bower.json file, remember to add flag --save
         notify:true
       },
       /**
+       * A boolean property to tell if need to open show up with empty input string.
+       * isAllowSuggestOnEmptyInput
+       */
+      isAllowSuggestOnEmptyInput: {
+        type:Boolean,
+        value:false
+      },
+      /**
+       * A boolean property to tell if need to open show up on focusing input element.
+       */
+      suggestOnFocus: {
+        type:Boolean,
+        value:false
+      },
+      /**
        * Input value.
        */
       inputValue:{
@@ -245,6 +260,13 @@ If you want to save it in bower.json file, remember to add flag --save
       inputObject:{
         type:Object,
         notify:true
+      },
+      /**
+       * Bind this to the <paper-input>'s autocomplete property.
+       */
+      autocomplete:{
+        type:String,
+        value:'address-level4'
       },
       /**
        * Bind this to the <paper-input>'s alwaysFloatLabel property.
@@ -296,6 +318,11 @@ If you want to save it in bower.json file, remember to add flag --save
       pattern:String
     },
 
+    listeners: {
+      'focus': '_onInputFocus',
+      'blur': '_onInputBlur'
+    },
+
     // Element Lifecycle
 
     ready: function() {
@@ -313,7 +340,7 @@ If you want to save it in bower.json file, remember to add flag --save
         }
       });
       var input = Polymer.dom(this.root).querySelector('paper-input');
-      input.$.input.autocomplete = 'address-level4';
+      input.$.input.autocomplete = this.autocomplete;
     },
 
     attached: function() {
@@ -394,7 +421,11 @@ If you want to save it in bower.json file, remember to add flag --save
      * @param {e} event
      */
     _keyup: function(e) {
-      if (e.which == 40){
+      if (e.which == 27 && this.suggestOnFocus) {
+        // esc button
+        this._clearSuggestings();
+      }
+      else if (e.which == 40){
         //down button
         var suggestionsMenu = Polymer.dom(this.root).querySelector('paper-menu');
         var selectedItem = suggestionsMenu.focusedItem;
@@ -473,8 +504,8 @@ If you want to save it in bower.json file, remember to add flag --save
       }
     },
     _search:function(term){
-      if (term == ""){
-        this._suggestions = [];
+      if (term == "" && !this.isAllowSuggestOnEmptyInput){
+        this._clearSuggestings();
         return;
       }
       var patt =  new RegExp(term.toLowerCase());
@@ -543,8 +574,29 @@ If you want to save it in bower.json file, remember to add flag --save
       else{
         this._suggestions = matched;
       }
+    },
+    _clearSuggestings:function() {
+      this._suggestions = [];
+      var input = Polymer.dom(this.root).querySelector('paper-input');
+      input.$.input.blur();
+    },
+    _onInputFocus:function(e, detail) {
+      if ( detail.sourceEvent
+              && detail.sourceEvent.relatedTarget == null
+              && this.suggestOnFocus
+      ) {
+        this._search(this.inputValue.trim());
+      }
+    },
+    _onInputBlur:function(e, detail) {
+      if ( detail.sourceEvent
+              && detail.sourceEvent.relatedTarget == null
+              && this.suggestOnFocus
+      ) {
+        this._search(this.inputValue.trim());
+        this._clearSuggestings();
+      }
     }
-
   });
 
 </script>
