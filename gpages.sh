@@ -14,6 +14,7 @@
 
 # usage gp Polymer core-item [branch]
 # Run in a clean directory passing in a GitHub org and repo name
+echo 'Deploy gpages'
 org=$1
 repo=$2
 name="Tianxiang Zhang"
