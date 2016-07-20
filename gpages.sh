@@ -24,7 +24,7 @@ branch=${3:-"master"} # default to master when branch isn't specified
 rm -rf temp
 mkdir temp && cd temp
 mkdir $repo
-git clone "https://${GH_TOKEN}@github.com/${org}/${repo}" --single-branch
+git clone "https://${org}:${GH_TOKEN}@github.com/${org}/${repo}" --single-branch
 
 # switch to gh-pages branch
 pushd $repo >/dev/null
