@@ -304,7 +304,10 @@ If you want to save it in bower.json file, remember to add flag --save
       /**
        * Bind this to the <paper-input>'s noLabelFloat property.
        */
-      noLabelFloat:Boolean,
+      noLabelFloat:{
+        type:Boolean,
+        value:false
+      },
       /**
        * Bind this to the <paper-input>'s readonly property.
        */
@@ -364,8 +367,6 @@ If you want to save it in bower.json file, remember to add flag --save
       return input.substring(0,1) + _typeahead.substring(1);
     },
     _getTypeaheadClasses:function(noLabelFloat){
-      console.log("_getTypeaheadClasses");
-      console.log(noLabelFloat);
       if (noLabelFloat && typeof(noLabelFloat) != 'undefined' && noLabelFloat == true) {
         return "typeahead-without-label";
       }
@@ -383,6 +384,24 @@ If you want to save it in bower.json file, remember to add flag --save
     _keydown: function(e) {
       if (e.which == 40 || e.which == 38){
           e.preventDefault();
+      }
+      else if (e.which == 9) {
+         //tab key
+        if (this._typeahead && typeof(this._typeahead)!= 'undefined' && this._typeahead != ''){
+          e.preventDefault();
+          if (this.isCandidatesJson == true){
+            this.inputObject = this._suggestions[index];
+            this.inputValue = this._getDisplayValue(this.inputObject);
+          }
+          else{
+            this.inputValue = this._typeahead;
+          }
+          var suggestionsMenu = Polymer.dom(this.root).querySelector('paper-menu');
+          var selectedItem = suggestionsMenu[0];
+          this._suggestions = [];
+          this.fire('pt-item-confirmed',selectedItem);
+          this._typeahead = "";
+        }
       }
     },
     /**
@@ -507,6 +526,9 @@ If you want to save it in bower.json file, remember to add flag --save
             this._typeahead = "";
           }
         }
+      }
+      else if (e.which == 9){
+        //prevent fire search for tab key
       }
       else{
         var suggestionsMenu = Polymer.dom(this.root).querySelector('paper-menu');
