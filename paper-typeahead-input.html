@@ -362,8 +362,10 @@ If you want to save it in bower.json file, remember to add flag --save
     },
     _getTypeaheadDisplay:function(_typeahead){
       var input = this._getInputValue();
-      if (input)
-      return input.substring(0,1) + _typeahead.substring(1);
+      if (input != "" && typeof(_typeahead) != 'undefined' && _typeahead !='') {
+        return input.substring(0,1) + _typeahead.substring(1);
+      }
+      return "";
     },
     _getTypeaheadClasses:function(noLabelFloat){
       if (noLabelFloat && typeof(noLabelFloat) != 'undefined' && noLabelFloat == true) {

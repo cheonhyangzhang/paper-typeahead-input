@@ -27,6 +27,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <paper-typeahead-input local-candidates="{{states}}"></paper-typeahead-input>
       </template>
     </test-fixture>
+    <test-fixture id="typeahead-display-value">
+      <template>
+        <paper-typeahead-input local-candidates="{{states}}"></paper-typeahead-input>
+      </template>
+    </test-fixture>
+     <test-fixture id="typeahead-display-style">
+      <template>
+        <paper-typeahead-input local-candidates="{{states}}"></paper-typeahead-input>
+      </template>
+    </test-fixture>
 
     <script>
       var states = [
@@ -115,6 +125,46 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           myEl.inputValue = 'bama';
           myEl._search(myEl.inputValue.trim());
           assert.equal(myEl._typeahead, "");
+        });
+      });
+     suite('typeahead should have the correct display value when user types different values', function() {
+        var myEl;
+        setup(function() {
+          console.log("setup");
+          myEl = fixture('typeahead-display-value');
+          myEl.localCandidates = states;
+        });
+        test('typeahead display correct display value when user types', function(){
+          myEl.inputValue = 'ala';
+          myEl._search(myEl.inputValue.trim());
+          assert.equal(myEl._getTypeaheadDisplay(myEl._typeahead), "alabama");
+          myEl.inputValue = 'al';
+          myEl._search(myEl.inputValue.trim());
+          assert.equal(myEl._getTypeaheadDisplay(myEl._typeahead), "alabama");
+          myEl.inputValue = '';
+          myEl._search(myEl.inputValue.trim());
+          assert.equal(myEl._getTypeaheadDisplay(myEl._typeahead), "");
+          myEl.inputValue = 'G';
+          myEl._search(myEl.inputValue.trim());
+          assert.equal(myEl._getTypeaheadDisplay(myEl._typeahead), "Georgia");
+          myEl.inputValue = 'g';
+          myEl._search(myEl.inputValue.trim());
+          assert.equal(myEl._getTypeaheadDisplay(myEl._typeahead), "georgia");
+          myEl.inputValue = 'bama';
+          myEl._search(myEl.inputValue.trim());
+          assert.equal(myEl._getTypeaheadDisplay(myEl._typeahead), "");
+        });
+      });
+     suite('typeahead should have the correct display classes', function() {
+        var myEl;
+        setup(function() {
+          console.log("setup");
+          myEl = fixture('typeahead-display-style');
+          myEl.localCandidates = states;
+        });
+        test('typeahead display correct display classes', function(){
+          assert.equal(myEl._getTypeaheadClasses(true), "typeahead-without-label");
+          assert.equal(myEl._getTypeaheadClasses(false), "typeahead-with-label");
         });
       });
     </script>
