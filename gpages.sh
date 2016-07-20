@@ -24,7 +24,6 @@ branch=${3:-"release"} # default to release when branch isn't specified
 rm -rf temp
 mkdir temp && cd temp
 mkdir $repo
-ls
 git clone "https://${org}:${GH_TOKEN}@github.com/${org}/${repo}" --single-branch
 
 # switch to gh-pages branch
