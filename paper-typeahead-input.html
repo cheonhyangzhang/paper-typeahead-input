@@ -441,6 +441,11 @@ If you want to save it in bower.json file, remember to add flag --save
         return;
       }
       var firstSuggestion = this._suggestions[0];
+
+      if (this.isCandidatesJson == true){ //then use the display property
+        firstSuggestion = this._getDisplayValue(firstSuggestion);
+      }
+
       if (this._getInputValue() == "") {
         this._typeahead = "";
         return;
