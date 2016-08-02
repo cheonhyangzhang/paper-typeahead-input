@@ -391,7 +391,8 @@ If you want to save it in bower.json file, remember to add flag --save
         if (this._typeahead && typeof(this._typeahead)!= 'undefined' && this._typeahead != ''){
           e.preventDefault();
           if (this.isCandidatesJson == true){
-            this.inputObject = this._suggestions[index];
+            //if a typeahead is available it's always the first element of the candidates
+            this.inputObject = this._suggestions[0];
             this.inputValue = this._getDisplayValue(this.inputObject);
           }
           else{
