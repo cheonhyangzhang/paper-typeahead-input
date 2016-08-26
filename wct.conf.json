@@ -1,5 +1,7 @@
 {
-  "suites": ["test/typeahead-feature.html"],
+  "suites": [
+    "test/index.html"
+  ],
     "verbose": true,
     "plugins": {
       "istanbul": {
