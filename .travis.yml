@@ -11,9 +11,7 @@ before_install:
   - rm google-chrome-stable_current_amd64.deb
   - "npm install -g bower"
   - "bower install"
-  - "npm i -D web-component-tester istanbul https://github.com/t2ym/web-component-tester-istanbul/tarball/0.10.1"
-  - "npm uninstall web-component-tester"
-  - "npm install -g web-component-tester@4.3.1"
+  - "npm i -g web-component-tester@4.3.1 istanbul https://github.com/t2ym/web-component-tester-istanbul/tarball/0.10.1"
   - "export DISPLAY=:99.0"
   - "sh -e /etc/init.d/xvfb start"
 script:
