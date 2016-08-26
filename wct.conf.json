@@ -11,7 +11,7 @@
           "exclude": []
       },
       "local": {
-        "browsers": ["chrome"]
+        "browsers": ["chrome", "firefox"]
     }
   }
 }
