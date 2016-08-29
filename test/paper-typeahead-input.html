@@ -17,6 +17,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <script src="../../web-component-tester/browser.js"></script>
 
     <!-- Step 1: import the element to test -->
+    <link rel="import" href="../../iron-test-helpers/iron-test-helpers.html">
     <link rel="import" href="../paper-typeahead-input.html">
   </head>
   <body>
@@ -103,12 +104,57 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           document.body.click();
           assert.equal(myEl._suggestions.length, 0);
         });
-        test('When click on the item in the dropdown, correct value should be selected.', function() {
-          // TODO
-          // myEl.inputValue = 'ala';
+        test('Suggestions should be correct when user type', function() {
+          assert.deepEqual(myEl.getSuggestions(), []);
+          myEl.inputValue = 'ala';
+          myEl._search(myEl.inputValue.trim());
+          assert.deepEqual(myEl.getSuggestions(), ['Alabama', 'Alaska', 'Palau']);
+        });
+        test('When click on the item in the dropdown, correct value should be selected.', function(done) {
+          assert.equal(myEl.inputValue, '');
+          var paperInput = Polymer.dom(myEl.root).querySelector('paper-input');
+          MockInteractions.pressAndReleaseKeyOn(paperInput, 65);
+          MockInteractions.pressAndReleaseKeyOn(paperInput, 76);
+          MockInteractions.pressAndReleaseKeyOn(paperInput, 65);
+          myEl.inputValue  = 'ala';
+          assert.equal(myEl.inputValue, 'ala');
+          myEl._search(myEl.inputValue.trim());
+          flush(function() {
+            assert.deepEqual(myEl.getSuggestions(), ['Alabama', 'Alaska', 'Palau']);
+            var paperMenu = Polymer.dom(myEl.root).querySelector('paper-menu');
+            assert.equal(paperMenu.items.length, 3);
+            var event = new CustomEvent('mouseover', {
+              detail: 0,
+              bubbles: true,
+              cancelable: true
+            });
+            paperMenu.items[0].dispatchEvent(event);
+            assert.equal(paperMenu.focusedItem, paperMenu.items[0]);
+            assert.equal(paperMenu.selected, 0);
+            paperMenu.items[0].click();
+            assert.equal(myEl.inputValue, 'Alabama');
+            done();
+          });
+        });
+        test('When use up and down key to navigate and select one item in the dropdown, correct value should be selected.', function(done) {
+          // TODO: Need to modify to get sendKeys with arrow key working.
+          assert.equal(myEl.inputValue, '');
+          // var paperInput = Polymer.dom(myEl.root).querySelector('paper-input');
+          // MockInteractions.pressAndReleaseKeyOn(paperInput, 65);
+          // MockInteractions.pressAndReleaseKeyOn(paperInput, 76);
+          // MockInteractions.pressAndReleaseKeyOn(paperInput, 65);
+          // myEl.inputValue  = 'ala';
+          // assert.equal(myEl.inputValue, 'ala');
           // myEl._search(myEl.inputValue.trim());
-          // var paperMenu = myEl.querySelector('paper-menu');
-          // paperMenu.select(0);
+
+          // MockInteractions.pressAndReleaseKeyOn(paperInput, 37);
+          // MockInteractions.pressAndReleaseKeyOn(paperInput, 9);
+          // MockInteractions.pressAndReleaseKeyOn(paperInput, 40);
+          // MockInteractions.pressEnter(paperInput);
+          flush(function() {
+          //   // assert.equal(myEl.inputValue, 'Palau');
+            done();
+          });
         });
       });
     </script>

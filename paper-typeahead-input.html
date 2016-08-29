@@ -571,6 +571,13 @@ If you want to save it in bower.json file, remember to add flag --save
         return [item];
       }
     },
+    /**
+     * [return current suggestions]
+     * @return {[array]}      [current suggestions]
+     */
+    getSuggestions: function(){
+      return this._suggestions;
+    },
     _search:function(term){
       if (term == ""){
         this._suggestions = [];
