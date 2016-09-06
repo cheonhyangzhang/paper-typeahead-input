@@ -11,11 +11,14 @@ before_install:
   - rm google-chrome-stable_current_amd64.deb
   - "npm install -g bower"
   - "bower install"
-  - "npm install -g web-component-tester"
+  - "npm i -g web-component-tester@4.3.1 istanbul https://github.com/t2ym/web-component-tester-istanbul/tarball/0.10.1"
+  - "npm install coveralls"
   - "export DISPLAY=:99.0"
   - "sh -e /etc/init.d/xvfb start"
 script:
   - wct
+after_script:
+  - "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
 deploy:
   provider: script
   script: "bash ./gpages.sh cheonhyangzhang paper-typeahead-input"

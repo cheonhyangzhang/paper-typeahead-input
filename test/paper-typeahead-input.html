@@ -17,35 +17,145 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <script src="../../web-component-tester/browser.js"></script>
 
     <!-- Step 1: import the element to test -->
+    <link rel="import" href="../../iron-test-helpers/iron-test-helpers.html">
     <link rel="import" href="../paper-typeahead-input.html">
   </head>
   <body>
 
     <!-- You can use the document as a place to set up your fixtures. -->
-    <test-fixture id="properties">
+    <test-fixture id="body-click">
       <template>
         <paper-typeahead-input></paper-typeahead-input>
       </template>
     </test-fixture>
 
     <script>
-      suite('paper-typeahead-input properties are defined as expected', function() {
+      var states = [
+           "Alabama",
+           "Alaska",
+           "American Samoa",
+           "Arizona",
+           "Arkansas",
+           "California",
+           "Colorado",
+           "Connecticut",
+           "Delaware",
+           "District Of Columbia",
+           "Federated States Of Micronesia",
+           "Florida",
+           "Georgia",
+           "Guam",
+           "Hawaii",
+           "Idaho",
+           "Illinois",
+           "Indiana",
+           "Iowa",
+           "Kansas",
+           "Kentucky",
+           "Louisiana",
+           "Maine",
+           "Marshall Islands",
+           "Maryland",
+           "Massachusetts",
+           "Michigan",
+           "Minnesota",
+           "Mississippi",
+           "Missouri",
+           "Montana",
+           "Nebraska",
+           "Nevada",
+           "New Hampshire",
+           "New Jersey",
+           "New Mexico",
+           "New York",
+           "North Carolina",
+           "North Dakota",
+           "Northern Mariana Islands",
+           "Ohio",
+           "Oklahoma",
+           "Oregon",
+           "Palau",
+           "Pennsylvania",
+           "Puerto Rico",
+           "Rhode Island",
+           "South Carolina",
+           "South Dakota",
+           "Tennessee",
+           "Texas",
+           "Utah",
+           "Vermont",
+           "Virgin Islands",
+           "Virginia",
+           "Washington",
+           "West Virginia",
+           "Wisconsin",
+           "Wyoming"
+      ];
+      suite('paper-typeahead-input dropdown should work as expected', function() {
         var myEl;
         setup(function() {
-          myEl = fixture('properties');
+          myEl = fixture('body-click');
+          myEl.localCandidates = states;
         });
-        // test('says hello', function() {
-        //   assert.equal(myEl.sayHello(), 'paper-typeahead-input says, Hello World!');
-        //   var greetings = myEl.sayHello('greetings Earthlings');
-        //   assert.equal(greetings, 'paper-typeahead-input says, greetings Earthlings');
-        // });
-        // test('fires lasers', function(done) {
-        //   myEl.addEventListener('paper-typeahead-input-lasers', function(event) {
-        //     assert.equal(event.detail.sound, 'Pew pew!');
-        //     done();
-        //   });
-        //   myEl.fireLasers();
-        // });
+        test('When click outside of the dropdown, the dropdown should hide.', function() {
+          myEl.inputValue = 'ala';
+          myEl._search(myEl.inputValue.trim());
+          assert.notEqual(myEl._suggestions.length, 0);
+          document.body.click();
+          assert.equal(myEl._suggestions.length, 0);
+        });
+        test('Suggestions should be correct when user type', function() {
+          assert.deepEqual(myEl.getSuggestions(), []);
+          myEl.inputValue = 'ala';
+          myEl._search(myEl.inputValue.trim());
+          assert.deepEqual(myEl.getSuggestions(), ['Alabama', 'Alaska', 'Palau']);
+        });
+        test('When click on the item in the dropdown, correct value should be selected.', function(done) {
+          assert.equal(myEl.inputValue, '');
+          var paperInput = Polymer.dom(myEl.root).querySelector('paper-input');
+          MockInteractions.pressAndReleaseKeyOn(paperInput, 65);
+          MockInteractions.pressAndReleaseKeyOn(paperInput, 76);
+          MockInteractions.pressAndReleaseKeyOn(paperInput, 65);
+          myEl.inputValue  = 'ala';
+          assert.equal(myEl.inputValue, 'ala');
+          myEl._search(myEl.inputValue.trim());
+          flush(function() {
+            assert.deepEqual(myEl.getSuggestions(), ['Alabama', 'Alaska', 'Palau']);
+            var paperMenu = Polymer.dom(myEl.root).querySelector('paper-menu');
+            assert.equal(paperMenu.items.length, 3);
+            var event = new CustomEvent('mouseover', {
+              detail: 0,
+              bubbles: true,
+              cancelable: true
+            });
+            paperMenu.items[0].dispatchEvent(event);
+            assert.equal(paperMenu.focusedItem, paperMenu.items[0]);
+            assert.equal(paperMenu.selected, 0);
+            paperMenu.items[0].click();
+            assert.equal(myEl.inputValue, 'Alabama');
+            done();
+          });
+        });
+        test('When use up and down key to navigate and select one item in the dropdown, correct value should be selected.', function(done) {
+          // TODO: Need to modify to get sendKeys with arrow key working.
+          assert.equal(myEl.inputValue, '');
+          // var paperInput = Polymer.dom(myEl.root).querySelector('paper-input');
+          // MockInteractions.pressAndReleaseKeyOn(paperInput, 65);
+          // MockInteractions.pressAndReleaseKeyOn(paperInput, 76);
+          // MockInteractions.pressAndReleaseKeyOn(paperInput, 65);
+          // myEl.inputValue  = 'ala';
+          // assert.equal(myEl.inputValue, 'ala');
+          // myEl._search(myEl.inputValue.trim());
+
+          // MockInteractions.pressAndReleaseKeyOn(paperInput, 37);
+          // MockInteractions.pressAndReleaseKeyOn(paperInput, 9);
+          // MockInteractions.pressAndReleaseKeyOn(paperInput, 40);
+          // MockInteractions.pressEnter(paperInput);
+          flush(function() {
+          //   // assert.equal(myEl.inputValue, 'Palau');
+            done();
+          });
+        });
       });
     </script>
 
