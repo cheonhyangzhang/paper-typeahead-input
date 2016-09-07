@@ -23,6 +23,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <body>
 
     <!-- You can use the document as a place to set up your fixtures. -->
+    <test-fixture id="basic">
+      <template>
+        <paper-typeahead-input></paper-typeahead-input>
+      </template>
+    </test-fixture>
     <test-fixture id="body-click">
       <template>
         <paper-typeahead-input></paper-typeahead-input>
@@ -91,6 +96,23 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
            "Wisconsin",
            "Wyoming"
       ];
+      suite('paper-typeahead-input basic features.', function() {
+        var myEl;
+        setup(function() {
+          myEl = fixture('basic');
+          myEl.localCandidates = states;
+        });
+        test('Property suggestions should be readOnly', function() {
+          myEl.inputValue = 'ala';
+          assert.deepEqual(myEl.suggestions, []);
+          myEl.suggestions = ['hello','world'];
+          assert.deepEqual(myEl.suggestions, []);
+          myEl._search(myEl.inputValue.trim());
+          assert.deepEqual(myEl.suggestions, ['Alabama', 'Alaska', 'Palau']);
+          myEl._setSuggestions([]);
+          assert.deepEqual(myEl.suggestions, []);
+        });
+      });
       suite('paper-typeahead-input dropdown should work as expected', function() {
         var myEl;
         setup(function() {
@@ -100,15 +122,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         test('When click outside of the dropdown, the dropdown should hide.', function() {
           myEl.inputValue = 'ala';
           myEl._search(myEl.inputValue.trim());
-          assert.notEqual(myEl._suggestions.length, 0);
+          assert.notEqual(myEl.suggestions.length, 0);
           document.body.click();
-          assert.equal(myEl._suggestions.length, 0);
+          assert.equal(myEl.suggestions.length, 0);
         });
         test('Suggestions should be correct when user type', function() {
-          assert.deepEqual(myEl.getSuggestions(), []);
+          assert.deepEqual(myEl.suggestions, []);
           myEl.inputValue = 'ala';
           myEl._search(myEl.inputValue.trim());
-          assert.deepEqual(myEl.getSuggestions(), ['Alabama', 'Alaska', 'Palau']);
+          assert.deepEqual(myEl.suggestions, ['Alabama', 'Alaska', 'Palau']);
         });
         test('When click on the item in the dropdown, correct value should be selected.', function(done) {
           assert.equal(myEl.inputValue, '');
@@ -120,7 +142,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           assert.equal(myEl.inputValue, 'ala');
           myEl._search(myEl.inputValue.trim());
           flush(function() {
-            assert.deepEqual(myEl.getSuggestions(), ['Alabama', 'Alaska', 'Palau']);
+            assert.deepEqual(myEl.suggestions, ['Alabama', 'Alaska', 'Palau']);
             var paperMenu = Polymer.dom(myEl.root).querySelector('paper-menu');
             assert.equal(paperMenu.items.length, 3);
             var event = new CustomEvent('mouseover', {
