@@ -1,0 +1,651 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../paper-input/paper-input.html">
+<link rel="import" href="../paper-menu/paper-menu.html">
+<link rel="import" href="../paper-item/paper-item.html">
+<link rel="import" href="../iron-ajax/iron-ajax.html">
+<link rel="import" href="../paper-material/paper-material.html">
+
+<!--
+paper-typeahead-input is an element providing typeahead feature for input.
+
+Basic use of paper-typeahead-input. Use a predefined list of suggestions.
+
+    <paper-typeahead-input label="US states" local-candidates="{{states}}"
+     placeholder="Please enter value" max-suggestions="4">
+    </paper-typeahead-input>
+
+For now, there are three types of sources for suggetions. localCandidates, prefetchUrl, and remoteUrl. The candidates combined from these three ways becomes the potential candidates for input.
+
+
+<b>Installation</b>
+
+Install with bower
+
+    bower install paper-typeahead-input
+
+If you want to save it in bower.json file, remember to add flag --save
+
+    bower install --save paper-typeahead-input
+
+@demo
+-->
+<dom-module id="paper-typeahead-input">
+
+  <style>
+    :host {
+      display: block;
+      box-sizing: border-box;
+    }
+    paper-material{
+      left:0;
+      right:0;
+      position: absolute;
+      z-index: 10;
+    }
+    paper-item{
+      cursor: pointer;
+    }
+    .iron-selected{
+      background: #E0E0E0;
+    }
+    .typeahead{
+      font-family: 'Roboto', 'Noto', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 24px;color: #737373;
+    }
+    .typeahead::first-letter{
+      visibility: hidden;
+    }
+    .typeahead-with-label{
+      position:absolute;
+      top:12px;
+    }
+    .typeahead-without-label{
+      position:absolute;
+      top:-8px;
+    }
+  </style>
+
+  <template>
+    <template is="dom-if" if="{{label}}">
+     <h3>{{label}}</h3>
+    </template>
+    <template is="dom-if" if="{{prefetchUrl}}">
+    <iron-ajax
+    auto
+    url="{{prefetchUrl}}"
+    handle-as="json"
+    last-response="{{_prefetchedCandidates}}"
+    ></iron-ajax>
+    </template>
+
+   <div style="position:relative;">
+    <p class$="typeahead {{_getTypeaheadClasses(noLabelFloat)}}">{{_getTypeaheadDisplay(_typeahead)}}</p>
+    <paper-input value="{{inputValue}}" on-keyup="_keyup" on-keydown="_keydown"  label="{{placeholder}}"
+      always-float-label="{{alwaysFloatLabel}}"
+      autofocus="{{autofocus}}"
+      char-counter="{{charCounter}}"
+      disabled="{{disabled}}"
+      error-message="{{errorMessage}}"
+      maxlength="{{maxlength}}"
+      minlength="{{minlength}}"
+      no-label-float="{{noLabelFloat}}"
+      readonly="{{readonly}}"
+      required="{{required}}"
+      auto-validate="{{autoValidate}}"
+      pattern="{{pattern}}"
+    ></paper-input>
+
+    <template is="dom-if" if="{{suggestions.length}}">
+    <paper-material >
+    <paper-menu on-iron-select="_itemSelect">
+      <template is="dom-repeat" items="{{suggestions}}">
+        <template is="dom-if" if="{{isCandidatesJson}}">
+          <paper-item on-mouseover="_selection" on-tap="_select">
+           <span>{{_getDisplayValue(item)}}</span>
+          </paper-item>
+        </template>
+        <template is="dom-if" if="{{!isCandidatesJson}}">
+          <paper-item on-mouseover="_selection" on-tap="_select">
+           <span>{{item}}</span>
+          </paper-item>
+        </template>
+      </template>
+    </paper-menu>
+    </paper-material>
+
+   </template>
+  </div>
+  </template>
+
+</dom-module>
+
+<script>
+
+  Polymer({
+
+    is: 'paper-typeahead-input',
+    /**
+     * Fired when an item in the suggestion list is selected, either by up and down key or hover by mouse.
+     *
+     * @event pt-item-select
+     */
+    /**
+     * Fired when an item in the suggestion list is confirmed, either by hit enter key where element selected or clicked on the element directly by mouse.
+     *
+     * @event pt-item-confirmed
+     */
+     /**
+     * Fired when remoteUrl is set up and http request on remoteUrl is scheduled to send ( depends on remoteUrlWaitMs setting).
+     *
+     * @event pt-remote-searching-start
+     */
+     /**
+     * Fired when remoteUrl is set up and http request on remoteUrl is finished.
+     *
+     * @event pt-remote-searching-end
+     */
+    properties: {
+
+      /**
+       * The label that will show up as the label for tags input. It not specified, no label will show up.
+       */
+      label:{
+        type:String,
+        value:''
+      },
+      /**
+       * The placeholder for the paper-input element.
+       */
+      placeholder:{
+        type:String,
+        value:'Please enter values here'
+      },
+      /**
+       * The candidates from local variable.
+       */
+      localCandidates:{
+        type:Array,
+        value:[]
+      },
+      /**
+       * Url for a prefectched list in json format for the list of suggestion candidates. The response should be something like: ["a","b"]
+       */
+      prefetchUrl:String,
+      /**
+      * The prefetched candidates get by prefetchUrl
+      */
+      _prefetchedCandidates:{
+        type:Array,
+        value:[]
+      },
+      /**
+       * Internal variable holding all matched suggestions.
+       */
+      suggestions:{
+        type:Array,
+        readOnly:true,
+        value:[]
+      },
+      /**
+       * Internal variable holding all matched suggestions.
+       */
+      _typeahead:{
+        type:String,
+        value:""
+      },
+      /**
+       * Maximum number of suggestions to show up in typeahead.
+       */
+      maxSuggestions:{
+        type:Number,
+        value:5
+      },
+      /**
+       * Remote url to perform a search using the value in the input. The input value will be passed in as url parameter. The placeholder should be %QUERY.
+       */
+      remoteUrl:String,
+       /**
+       * Number of milliseconds to wait after user types a character.
+       * This is helpful to reduce number of calls to remoteUrl based on performance consideration if it's set up properly based on how fast user usually types.
+       * Default is undefined which means the search request to remoteUrl will be fired immediately after user types a character.
+       * This propery only makes sense if remoteUrl is set up.
+       */
+      remoteUrlWaitMs:{
+        type:Number,
+        value:undefined
+      },
+      /**
+       * A boolean property to indicate if elements in the candidates list are json dictionary.
+       * When this property set up to be true, the candidates will be treated as list of json objects. Otherwise will be treated as list of strings.
+       */
+      isCandidatesJson:{
+        type:Boolean,
+        value:false
+      },
+      /**
+       * An array to tell what property in the json object of candidate is searchable.
+       * This property only makes sense when property isCandidatesJson set to be true.
+       */
+      searchableProps:{
+        type:Array,
+        value:[]
+      },
+      /**
+        * The property in json object that should be chosen for the paper-input value when an element is selected from the suggestions.
+        * This property only makes sense when property isCandidatesJson set to be true.
+        */
+      displayProp:{
+        type:String,
+        value:"undefined"
+      },
+      /**
+       * A boolean property to indicate if there is a searching going on to remoteUrl.
+       * This propery only makes sense if remoteUrl is set up.
+       */
+      remoteUrlSearching:{
+        type:Boolean,
+        value:false,
+        notify:true
+      },
+      /**
+       * Input value.
+       */
+      inputValue:{
+        type:String,
+        notify:true
+      },
+      /**
+       * Input object.
+       */
+      inputObject:{
+        type:Object,
+        notify:true
+      },
+      /**
+       * Bind this to the <paper-input>'s alwaysFloatLabel property.
+       */
+      alwaysFloatLabel:Boolean,
+      /**
+       * Bind this to the <paper-input>'s autofocus property.
+       */
+      autofocus:Boolean,
+      /**
+       * Bind this to the <paper-input>'s charCounter property.
+       */
+      charCounter:Boolean,
+      /**
+       * Bind this to the <paper-input>'s disabled property.
+       */
+      disabled:Boolean,
+      /**
+       * Bind this to the <paper-input>'s errorMessage property.
+       */
+      errorMessage:String,
+      /**
+       * Bind this to the <paper-input>'s maxlength property.
+       */
+      maxlength:Number,
+      /**
+       * Bind this to the <paper-input>'s minlength property.
+       */
+      minlength:Number,
+      /**
+       * Bind this to the <paper-input>'s noLabelFloat property.
+       */
+      noLabelFloat:{
+        type:Boolean,
+        value:false
+      },
+      /**
+       * Bind this to the <paper-input>'s readonly property.
+       */
+      readonly:Boolean,
+      /**
+       * Bind this to the <paper-input>'s required property.
+       */
+      required:Boolean,
+      /**
+       * Bind this to the <paper-input>'s autoValidate property.
+       */
+      autoValidate:Boolean,
+      /**
+       * Bind this to the <paper-input>'s pattern property.
+       */
+      pattern:String
+    },
+
+    // Element Lifecycle
+
+    ready: function() {
+      // `ready` is called after all elements have been configured, but
+      // propagates bottom-up. This element's children are ready, but parents
+      // are not.
+      //
+      // This is the point where you should make modifications to the DOM (when
+      // necessary), or kick off any processes the element wants to perform.
+      document.addEventListener("click", function(){
+        var ptinputs = document.querySelectorAll('paper-typeahead-input')
+        for (var i = 0; i < ptinputs.length; i ++){
+          var ptinput = ptinputs[i];
+          ptinput._setSuggestions([]);
+        }
+      });
+      var input = Polymer.dom(this.root).querySelector('paper-input');
+      input.$.input.autocomplete = 'address-level4';
+    },
+
+    attached: function() {
+      // `attached` fires once the element and its parents have been inserted
+      // into a document.
+      //
+      // This is a good place to perform any work related to your element's
+      // visual state or active behavior (measuring sizes, beginning animations,
+      // loading resources, etc).
+    },
+
+    detached: function() {
+      // The analog to `attached`, `detached` fires when the element has been
+      // removed from a document.
+      //
+      // Use this to clean up anything you did in `attached`.
+    },
+    _getTypeaheadDisplay:function(_typeahead){
+      var input = this._getInputValue();
+      if (input != "" && typeof(_typeahead) != 'undefined' && _typeahead !='') {
+        return input.substring(0,1) + _typeahead.substring(1);
+      }
+      return "";
+    },
+    _getTypeaheadClasses:function(noLabelFloat){
+      if (noLabelFloat && typeof(noLabelFloat) != 'undefined' && noLabelFloat == true) {
+        return "typeahead-without-label";
+      }
+      return "typeahead-with-label";
+    },
+    _itemSelect:function(e, detail){
+      this.fire('pt-item-select',detail);
+    },
+    // Element Behavior
+    /**
+     * Callback for keydown event
+     *
+     * @param {e} event
+     */
+    _keydown: function(e) {
+      if (e.which == 40 || e.which == 38){
+          e.preventDefault();
+      }
+      else if (e.which == 9) {
+         //tab key
+        if (this._typeahead && typeof(this._typeahead)!= 'undefined' && this._typeahead != ''){
+          e.preventDefault();
+          if (this.isCandidatesJson == true){
+            //if a typeahead is available it's always the first element of the candidates
+            this.inputObject = this.suggestions[0];
+            this.inputValue = this._getDisplayValue(this.inputObject);
+          }
+          else{
+            this.inputValue = this._typeahead;
+          }
+          var suggestionsMenu = Polymer.dom(this.root).querySelector('paper-menu');
+          var selectedItem = suggestionsMenu[0];
+          this._setSuggestions([]);
+          this.fire('pt-item-confirmed',selectedItem);
+          this._typeahead = "";
+        }
+      }
+    },
+    /**
+     * Callback on mouseover event on paper-item
+     *
+     */
+    _selection:function(e){
+      var suggestionsMenu = Polymer.dom(this.root).querySelector('paper-menu');
+      if (suggestionsMenu && typeof(suggestionsMenu) != 'undefined'){
+        var selectedItem = e.currentTarget;
+        index = Number(suggestionsMenu.indexOf(selectedItem));
+        suggestionsMenu.select(index);
+        var input = Polymer.dom(this.root).querySelector('paper-input');
+        input.$.input.focus();
+      }
+      else{
+        console.log("suggestionsMenu not defined");
+      }
+    },
+    /**
+     * Return inputValue
+     * @return {[type]} [description]
+     */
+    _getInputValue: function() {
+      if (this.inputValue && typeof(this.inputValue) != 'undefined'){
+        return this.inputValue.trim();
+      }
+      return "";
+    },
+    /**
+     * Update the text to show for typeahead
+     */
+    _updateTypeahead: function() {
+      if (this.suggestions.length == 0){
+        this._typeahead = "";
+        return;
+      }
+      var firstSuggestion = this.suggestions[0];
+
+      if (this.isCandidatesJson == true){ //then use the display property
+        firstSuggestion = this._getDisplayValue(firstSuggestion);
+      }
+
+      if (this._getInputValue() == "") {
+        this._typeahead = "";
+        return;
+      }
+      if (firstSuggestion.toLowerCase().indexOf(this._getInputValue().toLowerCase())!=0) {
+        this._typeahead = "";
+        return;
+      }
+      this._typeahead = firstSuggestion;
+    },
+    /**
+     * Callback on click event on paper-item
+     */
+    _select: function(e) {
+      var suggestionsMenu = Polymer.dom(this.root).querySelector('paper-menu');
+      if (suggestionsMenu && typeof(suggestionsMenu) != 'undefined'){
+        var selectedItem = e.currentTarget;
+        index = Number(suggestionsMenu.indexOf(selectedItem));
+
+        if (this.isCandidatesJson == true){
+          this.inputObject = this.suggestions[index];
+          this.inputValue = this._getDisplayValue(this.inputObject);
+        }
+        else{
+          this.inputValue = this.suggestions[index];
+        }
+
+        this._setSuggestions([]);
+        this.fire('pt-item-confirmed',e.target);
+        this._typeahead = "";
+        e.stopPropagation();
+      }
+      else{
+        console.log("suggestionsMenu not defined");
+      }
+    },
+    /**
+     * Callback for keyup event
+     *
+     * @param {e} event
+     */
+    _keyup: function(e) {
+      if (e.which == 40){
+        //down button
+        var suggestionsMenu = Polymer.dom(this.root).querySelector('paper-menu');
+        var selectedItem = suggestionsMenu.focusedItem;
+        var index = 0;
+        if (typeof(selectedItem) != 'undefined'){
+          index = Number(suggestionsMenu.indexOf(selectedItem));
+          index = Math.min(index + 1, this.suggestions.length - 1);
+        }
+        suggestionsMenu.select(index);
+        var input = Polymer.dom(this.root).querySelector('paper-input');
+        input.$.input.focus();
+      }
+      else if (e.which == 38){
+        //up
+        var suggestionsMenu = Polymer.dom(this.root).querySelector('paper-menu');
+        var selectedItem = suggestionsMenu.focusedItem;
+        if (typeof(selectedItem) != 'undefined'){
+          index = Number(suggestionsMenu.indexOf(selectedItem));
+          index = Math.max(index - 1, -1);
+          suggestionsMenu.select(index);
+        }
+        var input = Polymer.dom(this.root).querySelector('paper-input');
+        input.$.input.focus();
+      }
+      else if (e.which == 13){
+        var suggestionsMenu = Polymer.dom(this.root).querySelector('paper-menu');
+        if (suggestionsMenu && typeof(suggestionsMenu) != 'undefined'){
+          var selectedItem = suggestionsMenu.focusedItem;
+          if (typeof(selectedItem) != 'undefined'){
+            index = Number(suggestionsMenu.indexOf(selectedItem));
+
+            if (this.isCandidatesJson == true){
+              this.inputObject = this.suggestions[index];
+              this.inputValue = this._getDisplayValue(this.inputObject);
+            }
+            else{
+              this.inputValue = this.suggestions[index];
+            }
+            this._setSuggestions([]);
+            this.fire('pt-item-confirmed',selectedItem);
+            this._typeahead = "";
+          }
+        }
+      }
+      else if (e.which == 9){
+        //prevent fire search for tab key
+      }
+      else{
+        var suggestionsMenu = Polymer.dom(this.root).querySelector('paper-menu');
+        if (suggestionsMenu && typeof(suggestionsMenu) != 'undefined'){
+          suggestionsMenu.select(-1);
+        }
+        // if (this.inputValue.length >= 3){
+        this._search(this.inputValue.trim());
+        // this.suggestions = this._search(this.inputValue.trim());
+        // }
+      }
+    },
+    _getDisplayValue:function(item){
+      if (this.displayProp && typeof(this.displayProp) != 'undefined'){
+        return item[this.displayProp];
+      }
+      else{
+        console.log("paper-typeahead-input: displayProp not set up");
+        return "";
+      }
+    },
+    _getTestCandidate:function(item){
+      if (this.isCandidatesJson == true){
+        var toTest = [];
+        for (var i = 0; i < this.searchableProps.length; i ++){
+          if (item[this.searchableProps[i]] != "undefined"){
+            toTest.push(item[this.searchableProps[i]]);
+          }
+        }
+        return toTest;
+      }
+      else{
+        return [item];
+      }
+    },
+    _search:function(term){
+      if (term == ""){
+        this._setSuggestions([]);
+        this._updateTypeahead();
+        return;
+      }
+      var patt =  new RegExp(term.toLowerCase());
+      var matched = [];
+
+      if (typeof(this.localCandidates) != 'undefined'){
+        for (var i = 0; i < this.localCandidates.length; i ++){
+          if (matched.length == this.maxSuggestions){
+            break;
+          }
+          var toTest = this._getTestCandidate(this.localCandidates[i]);
+          for (var j = 0; j < toTest.length; j ++){
+            var item = toTest[j];
+            if (patt.test(item.toLowerCase()) == true){
+              matched.push(this.localCandidates[i]);
+              break;
+            }
+          }
+        }
+      }
+      if (typeof(this._prefetchedCandidates) != 'undefined'){
+        for (var i = 0; i < this._prefetchedCandidates.length; i ++){
+          if (matched.length == this.maxSuggestions){
+            break;
+          }
+          var toTest = this._getTestCandidate(this._prefetchedCandidates[i]);
+          for (var j = 0; j < toTest.length; j ++){
+            var item = toTest[j];
+            if (patt.test(item.toLowerCase()) == true){
+              matched.push(this._prefetchedCandidates[i]);
+              break;
+            }
+          }
+        }
+      }
+      // this.suggestions = this.suggestions.concat(matched);
+      if (typeof(this.remoteUrl) != 'undefined'){
+        var pt_element = this;
+        pt_element.fire('pt-remote-searching-start',pt_element);
+        pt_element.remoteUrlSearching = true;
+        this.debounce('remoteUrlSearch', function(){
+          var url = pt_element.remoteUrl.replace("%QUERY", term);
+          var xmlhttp = new XMLHttpRequest();
+          xmlhttp.open('GET', url, true);
+          xmlhttp.setRequestHeader("Content-type", "application/json");
+          var ptinput = pt_element;
+          xmlhttp.onreadystatechange = function() {
+              if (xmlhttp.readyState === 4) {
+                if (xmlhttp.status == 200){
+                    var resp = xmlhttp.response;
+                    var remoteMatched = JSON.parse(resp);
+                    var cuttedMatched = remoteMatched.slice(0,ptinput.maxSuggestions);
+                    matched = matched.concat(cuttedMatched);
+                    ptinput._setSuggestions(matched);
+                }
+                pt_element.remoteUrlSearching = false;
+                pt_element.fire('pt-remote-searching-end',pt_element);
+              }
+
+
+          }
+          xmlhttp.send();
+        }, this.remoteUrlWaitMs);
+      }
+      else{
+        this._setSuggestions(matched);
+      }
+      this._updateTypeahead();
+    }//_search
+
+  });
+
+</script>
