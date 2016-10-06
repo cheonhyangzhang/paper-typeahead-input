@@ -629,8 +629,7 @@ If you want to save it in bower.json file, remember to add flag --save
                     var remoteMatched = JSON.parse(resp);
                     var cuttedMatched = remoteMatched.slice(0,ptinput.maxSuggestions);
                     matched = matched.concat(cuttedMatched);
-                    // ptinput.suggestions = ptinput.suggestions.concat(cuttedMatched);
-                    ptinput.suggestions = matched;
+                    ptinput._setSuggestions(matched);
                 }
                 pt_element.remoteUrlSearching = false;
                 pt_element.fire('pt-remote-searching-end',pt_element);
