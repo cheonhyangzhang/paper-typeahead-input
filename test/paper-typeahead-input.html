@@ -33,6 +33,23 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <paper-typeahead-input></paper-typeahead-input>
       </template>
     </test-fixture>
+    <test-fixture id="remote-url">
+      <template>
+        <paper-typeahead-input  ></paper-typeahead-input>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="prefetch-url">
+      <template>
+        <paper-typeahead-input  max-suggestions="3"></paper-typeahead-input>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="prefetch-url-json">
+      <template>
+      <paper-typeahead-input  max-suggestions="5" label="States in JSON object"  placeholder="Search for US states by state name or state nickname"> </paper-typeahead-input>
+      </template>
+    </test-fixture>
 
     <script>
       var states = [
@@ -182,6 +199,72 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           flush(function() {
           //   // assert.equal(myEl.inputValue, 'Palau');
             done();
+          });
+        });
+      });
+      suite('paper-typeahead-input basic features.', function() {
+        var myEl;
+        setup(function() {
+          myEl = fixture('remote-url');
+        });
+        test('remote-url should fetch candidates from ajax', function(done) {
+          myEl.remoteUrl = 'http://localhost:2000/components/paper-typeahead-input/fakeRemote.json?q=%QUERY';
+          myEl.inputValue = 'w';
+          assert.equal(myEl.suggestions.length, 0);
+          myEl._search(myEl.inputValue.trim());
+          myEl.addEventListener('pt-remote-searching-end', function(event) {
+            assert.equal(myEl.suggestions.length, 5);
+            assert.deepEqual(myEl.suggestions, ['White', 'Gray', 'Pink', 'Red', 'Brown']);
+            done();
+          });
+        });
+      });
+      suite('paper-typeahead-input basic features.', function() {
+        var myEl;
+        setup(function() {
+          myEl = fixture('prefetch-url');
+        });
+        test('prefetchUrl should fetch candidates from remote and store the candidates in local variable', function(done) {
+          myEl.prefetchUrl = 'http://localhost:2000/components/paper-typeahead-input/countries.json';
+          assert.equal(myEl._prefetchedCandidates.length, 0);
+          flush(function() {
+            var ironAjax = Polymer.dom(myEl.root).querySelector('iron-ajax');
+            ironAjax.addEventListener('response', function(event) {
+              assert.equal(myEl._prefetchedCandidates.length, 239);
+              //TODO
+              // NEED TO TEST SEARCH FUNCTIONALITY WHEN USING PREFETCH URL
+              myEl.inputValue = 'China';
+              myEl._search(myEl.inputValue.trim());
+              assert.deepEqual(myEl.suggestions, ['China']);
+              myEl.inputValue = 'c';
+              myEl._search(myEl.inputValue.trim());
+              assert.deepEqual(myEl.suggestions, ['Canada', 'American Samoa', 'Antarctica']);
+              done();
+            });
+          });
+        });
+      });
+      suite('paper-typeahead-input prefetch json.', function() {
+        var myEl;
+        setup(function() {
+          myEl = fixture('prefetch-url');
+          myEl.prefetchUrl = 'http://localhost:2000/components/paper-typeahead-input/statesInObjects.json';
+          myEl.isCandidatesJson = true;
+          myEl.displayProp="name";
+          myEl.searchableProps=['name','nickname'];
+        });
+        test('prefetchUrl should fetch candidates from remote and store the candidates in local variable', function(done) {
+          assert.equal(myEl._prefetchedCandidates.length, 0);
+          flush(function() {
+            var ironAjax = Polymer.dom(myEl.root).querySelector('iron-ajax');
+            ironAjax.addEventListener('response', function(event) {
+              assert.equal(myEl._prefetchedCandidates.length, 50);
+              myEl.inputValue = 'Land of Lincoln ';
+              myEl._search(myEl.inputValue.trim());
+              assert.equal(myEl.suggestions.length, 1);
+              assert.equal(myEl.suggestions[0]['name'], 'Illinois');
+              done();
+            });
           });
         });
       });
