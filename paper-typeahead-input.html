@@ -361,6 +361,13 @@ If you want to save it in bower.json file, remember to add flag --save
       //
       // Use this to clean up anything you did in `attached`.
     },
+    /**
+     * Focus on the paper-input element inside of paper-typeahead-input.
+     */
+    focus: function() {
+      var input = Polymer.dom(this.root).querySelector('paper-input');
+      input.focus();
+    },
     _getTypeaheadDisplay:function(_typeahead){
       var input = this._getInputValue();
       if (input != "" && typeof(_typeahead) != 'undefined' && _typeahead !='') {
@@ -418,7 +425,7 @@ If you want to save it in bower.json file, remember to add flag --save
         index = Number(suggestionsMenu.indexOf(selectedItem));
         suggestionsMenu.select(index);
         var input = Polymer.dom(this.root).querySelector('paper-input');
-        input.$.input.focus();
+        input.focus();
       }
       else{
         console.log("suggestionsMenu not defined");
@@ -501,7 +508,7 @@ If you want to save it in bower.json file, remember to add flag --save
         }
         suggestionsMenu.select(index);
         var input = Polymer.dom(this.root).querySelector('paper-input');
-        input.$.input.focus();
+        input.focus();
       }
       else if (e.which == 38){
         //up
@@ -513,7 +520,7 @@ If you want to save it in bower.json file, remember to add flag --save
           suggestionsMenu.select(index);
         }
         var input = Polymer.dom(this.root).querySelector('paper-input');
-        input.$.input.focus();
+        input.focus();
       }
       else if (e.which == 13){
         var suggestionsMenu = Polymer.dom(this.root).querySelector('paper-menu');

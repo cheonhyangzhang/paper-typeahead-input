@@ -132,6 +132,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           myEl._search(myEl.inputValue.trim());
           assert.deepEqual(myEl.suggestions, ['Alabama', 'Alaska', 'Palau']);
         });
+        test('Make function call of focus on paper-typeahead-input should make paper-input element inside become focus', function() {
+          var paperInput = Polymer.dom(myEl.root).querySelector('paper-input');
+          assert.equal(paperInput.focused, false);
+          myEl.focus();
+          assert.equal(paperInput.focused, true);
+        });
         test('When click on the item in the dropdown, correct value should be selected.', function(done) {
           assert.equal(myEl.inputValue, '');
           var paperInput = Polymer.dom(myEl.root).querySelector('paper-input');
