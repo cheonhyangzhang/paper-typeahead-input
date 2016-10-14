@@ -151,9 +151,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         });
         test('Make function call of focus on paper-typeahead-input should make paper-input element inside become focus', function() {
           var paperInput = Polymer.dom(myEl.root).querySelector('paper-input');
-          assert.equal(paperInput.focused, false);
+          // Cannot use paperInput.focused to check if paper-input is focused because it's not working in Firefox. After calling focus function on paper-input the element ends up with <paper-input focused=""></paper-input>
+          paperInput.focus = sinon.spy();
+          assert.equal(paperInput.focus.called, false);
           myEl.focus();
-          assert.equal(paperInput.focused, true);
+          assert.equal(paperInput.focus.calledOnce, true);
         });
         test('When click on the item in the dropdown, correct value should be selected.', function(done) {
           assert.equal(myEl.inputValue, '');

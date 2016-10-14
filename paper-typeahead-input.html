@@ -366,8 +366,7 @@ If you want to save it in bower.json file, remember to add flag --save
      */
     focus: function() {
       var input = Polymer.dom(this.root).querySelector('paper-input');
-      input.$.input.focus();
-      // input.focus();
+      input.focus();
     },
     _getTypeaheadDisplay:function(_typeahead){
       var input = this._getInputValue();
