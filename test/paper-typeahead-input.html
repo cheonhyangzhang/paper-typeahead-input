@@ -55,7 +55,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       var isLocal = false;
       var hostName = "http://localhost:2000";
       if (isLocal == false) {
-        hostName = "https://github.com/cheonhyangzhang/paper-typeahead-input";
+        hostName = 'https://cheonhyangzhang.github.io/paper-typeahead-input/components/paper-typeahead-input';
       }
       var states = [
            "Alabama",
@@ -215,7 +215,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           myEl = fixture('remote-url');
         });
         test('remote-url should fetch candidates from ajax', function(done) {
-          myEl.remoteUrl = hostName + '/components/paper-typeahead-input/fakeRemote.json?q=%QUERY';
+          myEl.remoteUrl = hostName + '/fakeRemote.json?q=%QUERY';
           myEl.inputValue = 'w';
           assert.equal(myEl.suggestions.length, 0);
           myEl._search(myEl.inputValue.trim());
@@ -232,7 +232,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           myEl = fixture('prefetch-url');
         });
         test('prefetchUrl should fetch candidates from remote and store the candidates in local variable', function(done) {
-          myEl.prefetchUrl = hostName + '/components/paper-typeahead-input/countries.json';
+          myEl.prefetchUrl = hostName + '/countries.json';
           console.log("myEl.prefetchUrl : " + myEl.prefetchUrl)
           assert.equal(myEl._prefetchedCandidates.length, 0);
           flush(function() {
@@ -256,7 +256,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         var myEl;
         setup(function() {
           myEl = fixture('prefetch-url');
-          myEl.prefetchUrl = hostName + '/components/paper-typeahead-input/statesInObjects.json';
+          myEl.prefetchUrl = hostName + '/statesInObjects.json';
           myEl.isCandidatesJson = true;
           myEl.displayProp="name";
           myEl.searchableProps=['name','nickname'];
