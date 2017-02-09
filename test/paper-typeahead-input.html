@@ -52,6 +52,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </test-fixture>
 
     <script>
+      var isLocal = false;
+      var hostName = "http://localhost:2000";
+      if (isLocal == false) {
+        hostName = "https://github.com/cheonhyangzhang/paper-typeahead-input";
+      }
       var states = [
            "Alabama",
            "Alaska",
@@ -210,7 +215,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           myEl = fixture('remote-url');
         });
         test('remote-url should fetch candidates from ajax', function(done) {
-          myEl.remoteUrl = 'http://localhost:2000/components/paper-typeahead-input/fakeRemote.json?q=%QUERY';
+          myEl.remoteUrl = hostName + '/components/paper-typeahead-input/fakeRemote.json?q=%QUERY';
           myEl.inputValue = 'w';
           assert.equal(myEl.suggestions.length, 0);
           myEl._search(myEl.inputValue.trim());
@@ -227,7 +232,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           myEl = fixture('prefetch-url');
         });
         test('prefetchUrl should fetch candidates from remote and store the candidates in local variable', function(done) {
-          myEl.prefetchUrl = 'http://localhost:2000/components/paper-typeahead-input/countries.json';
+          myEl.prefetchUrl = hostName + '/components/paper-typeahead-input/countries.json';
           assert.equal(myEl._prefetchedCandidates.length, 0);
           flush(function() {
             var ironAjax = Polymer.dom(myEl.root).querySelector('iron-ajax');
@@ -250,7 +255,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         var myEl;
         setup(function() {
           myEl = fixture('prefetch-url');
-          myEl.prefetchUrl = 'http://localhost:2000/components/paper-typeahead-input/statesInObjects.json';
+          myEl.prefetchUrl = hostName + '/components/paper-typeahead-input/statesInObjects.json';
           myEl.isCandidatesJson = true;
           myEl.displayProp="name";
           myEl.searchableProps=['name','nickname'];
