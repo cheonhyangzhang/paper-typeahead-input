@@ -233,6 +233,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         });
         test('prefetchUrl should fetch candidates from remote and store the candidates in local variable', function(done) {
           myEl.prefetchUrl = hostName + '/components/paper-typeahead-input/countries.json';
+          console.log("myEl.prefetchUrl : " + myEl.prefetchUrl)
           assert.equal(myEl._prefetchedCandidates.length, 0);
           flush(function() {
             var ironAjax = Polymer.dom(myEl.root).querySelector('iron-ajax');
