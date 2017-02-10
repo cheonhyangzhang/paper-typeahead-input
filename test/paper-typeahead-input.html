@@ -52,11 +52,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </test-fixture>
 
     <script>
-      var isLocal = false;
-      var hostName = "http://localhost:2000";
-      if (isLocal == false) {
-        hostName = 'https://cheonhyangzhang.github.io/paper-typeahead-input/components/paper-typeahead-input';
-      }
+      var url = window.location.href
+      var arr = url.split("/");
+      var hostName = arr[0] + "//" + arr[2]
       var states = [
            "Alabama",
            "Alaska",
@@ -209,7 +207,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           });
         });
       });
-      suite('paper-typeahead-input basic features.', function() {
+      suite('paper-typeahead-input remote url.', function() {
         var myEl;
         setup(function() {
           myEl = fixture('remote-url');
@@ -226,7 +224,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           });
         });
       });
-      suite('paper-typeahead-input basic features.', function() {
+      suite('paper-typeahead-input pretech url.', function() {
         var myEl;
         setup(function() {
           myEl = fixture('prefetch-url');
