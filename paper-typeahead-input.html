@@ -105,7 +105,9 @@ If you want to save it in bower.json file, remember to add flag --save
       required="{{required}}"
       auto-validate="{{autoValidate}}"
       pattern="{{pattern}}"
-    ></paper-input>
+    >
+      <content></content>
+    </paper-input>
 
     <template is="dom-if" if="{{suggestions.length}}">
     <paper-material >
