@@ -344,6 +344,10 @@ If you want to save it in bower.json file, remember to add flag --save
       });
       var input = Polymer.dom(this.root).querySelector('paper-input');
       input.$.input.autocomplete = 'address-level4';
+
+      if (!this.inputValue && (this.displayProp && typeof(this.displayProp) != 'undefined') && (this.inputObject && typeof(this.inputObject) != 'undefined')) {
+        this.inputValue = this.inputObject[this.displayProp];
+      }
     },
 
     attached: function() {
