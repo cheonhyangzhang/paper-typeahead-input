@@ -177,7 +177,8 @@ If you want to save it in bower.json file, remember to add flag --save
        */
       localCandidates:{
         type:Array,
-        value:[]
+        value:[],
+        observer: '_candidatesUpdated'
       },
       /**
        * Url for a prefectched list in json format for the list of suggestion candidates. The response should be something like: ["a","b"]
@@ -554,6 +555,14 @@ If you want to save it in bower.json file, remember to add flag --save
         this._search(this.inputValue.trim());
         // this.suggestions = this._search(this.inputValue.trim());
         // }
+      }
+    },
+    _candidatesUpdated:function(candidates){
+      if(this.inputValue != undefined){
+        var val = this.inputValue.trim();
+        if(candidates.length > 0 && candidates[0].trim() !== val){
+          this._search(val);
+        }
       }
     },
     _getDisplayValue:function(item){
