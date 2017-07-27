@@ -23,6 +23,7 @@
     "iron-test-helpers": "~1.2.5",
     "paper-input": "PolymerElements/paper-input#^1.0.5",
     "paper-item": "PolymerElements/paper-item#^1.0.1",
+    "paper-material": "PolymerElements/paper-material#^1.0.7",
     "paper-menu": "PolymerElements/paper-menu#^1.0.0",
     "polymer": "Polymer/polymer#^1.0.0"
   },
